@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/06 23:40:06 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/07 00:00:32 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,10 @@
 
 int	main(int argc, char **argv)
 {
+	t_trcrt_config	cfg = { 0 };
+
 	(void)argc;
-	ft_printf("This is %s!\n", *argv);
+	cfg.exec = ft_exec_name(*argv);
+	ft_printf("This is %s!\n", cfg.exec);
 	return (EXIT_SUCCESS);
 }
