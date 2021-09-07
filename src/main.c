@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 00:16:05 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 00:28:35 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,9 @@ void		intopt(int *dest, t_optdata *optd, int min, int max)
 static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 {
 	int			opt;
-	t_optdata	optd;
 	char		**args;
+	t_optdata	optd = { 0 };
 
-	ft_bzero((void *)&optd, sizeof(t_optdata));
 	init_getopt(&optd, FT_TRACEROUTE_OPT, NULL, NULL);
 	args = ft_memalloc((argc + 1) * sizeof(char *));
 	ft_memcpy((void *)args, (void *)argv, argc * sizeof(char *));
