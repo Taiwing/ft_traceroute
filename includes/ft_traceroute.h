@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 07:30:39 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 07:43:24 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,21 @@ typedef struct	s_trcrt_config
 	"\t-N sprobes\t\tnumber of probe packets sent out simultaneously\n"\
 	"\t-p port\t\t\tdestination port base for UDP probes\n"\
 	"\t-q nprobes\t\tnumber of probe packets per hop\n"
+
+/*
+** t_udp_hdr: UDP header structure
+**
+** srcp: source port (unused, set to 0)
+** dstp: destination port (set to port and incremented)
+** len: length of udp header and data (fixed)
+** sum: checksum of packet (unused, set to 0)
+*/
+typedef struct	s_udp_hdr
+{
+	uint16_t	srcp;
+	uint16_t	dstp;
+	uint16_t	len;
+	uint16_t	sum;
+}				t_udp_hdr;
 
 #endif
