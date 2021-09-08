@@ -6,13 +6,13 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 00:28:35 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 07:30:01 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
-void		intopt(int *dest, t_optdata *optd, int min, int max)
+static void	intopt(int *dest, t_optdata *optd, int min, int max)
 {
 	int		ret;
 	char	*err;
@@ -41,7 +41,10 @@ static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 	while ((opt = ft_getopt(argc, args, &optd)) >= 0 || argc == 1)
 		switch (opt)
 		{
-			case 'm': intopt(&cfg->max_ttl, &optd, 0, 255);	break;
+			case 'm': intopt(&cfg->max_ttl, &optd, 0, 255);				break;
+			case 'N': intopt(&cfg->sprobes, &optd, 0, SPROBES_MAX);		break;
+			case 'p': intopt(&cfg->port, &optd, 0, INT_MAX);			break;
+			case 'q': intopt(&cfg->nprobes, &optd, 1, NPROBES_MAX);		break;
 			default:
 				ft_printf(FT_TRACEROUTE_HELP, cfg->exec);
 				ft_exit(NULL, opt != 'h');
@@ -52,12 +55,10 @@ static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 
 int			main(int argc, char **argv)
 {
-	t_trcrt_config	cfg = { 0 };
+	t_trcrt_config	cfg = CONFIG_DEF;
 
-	(void)argc;
 	cfg.exec = ft_exec_name(*argv);
 	ft_exitmsg((char *)cfg.exec);
-	cfg.max_ttl = MAX_TTL_DEF;
 	cfg.dest = get_options(&cfg, argc, argv);
 	ft_printf("This is %s!\n", cfg.exec);
 	ft_printf("traceroute to %s (%s), %d hops max, 60 byte packets\n",
