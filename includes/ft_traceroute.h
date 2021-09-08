@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 07:43:24 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 09:21:19 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "libft.h"
 # include <limits.h>
+# include <netinet/ip.h>
+# include <netinet/ip_icmp.h>
 
 /*
 ** t_trcrt_config: traceroute configuration
@@ -35,6 +37,42 @@ typedef struct	s_trcrt_config
 	int			nprobes;
 	int			port;
 }				t_trcrt_config;
+
+/*
+** t_udphdr: UDP header structure
+**
+** srcp: source port (unused, set to 0)
+** dstp: destination port (set to port and incremented)
+** len: length of udp header and data (fixed)
+** sum: checksum of packet
+*/
+typedef struct	s_udphdr
+{
+	uint16_t	srcp;
+	uint16_t	dstp;
+	uint16_t	len;
+	uint16_t	sum;
+}				t_udphdr;
+
+/*
+** Probe macros
+*/
+
+# define	PROBE_SIZE			60
+# define	PROBE_UDP_LEN		(PROBE_SIZE - sizeof(struct iphdr))
+# define	PROBE_UDP_DATA_LEN	(PROBE_UDP_LEN - sizeof(t_udphdr))
+
+/*
+** t_probe: udp probe structure
+**
+** udp: udp header
+** data: data buffer
+*/
+typedef struct	s_probe
+{
+	t_udphdr	udp;
+	char		data[PROBE_UDP_DATA_LEN];
+}				t_probe;
 
 /*
 ** traceroute macros
@@ -59,21 +97,5 @@ typedef struct	s_trcrt_config
 	"\t-N sprobes\t\tnumber of probe packets sent out simultaneously\n"\
 	"\t-p port\t\t\tdestination port base for UDP probes\n"\
 	"\t-q nprobes\t\tnumber of probe packets per hop\n"
-
-/*
-** t_udp_hdr: UDP header structure
-**
-** srcp: source port (unused, set to 0)
-** dstp: destination port (set to port and incremented)
-** len: length of udp header and data (fixed)
-** sum: checksum of packet (unused, set to 0)
-*/
-typedef struct	s_udp_hdr
-{
-	uint16_t	srcp;
-	uint16_t	dstp;
-	uint16_t	len;
-	uint16_t	sum;
-}				t_udp_hdr;
 
 #endif

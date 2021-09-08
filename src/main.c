@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 07:30:01 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 08:58:19 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int			main(int argc, char **argv)
 	ft_exitmsg((char *)cfg.exec);
 	cfg.dest = get_options(&cfg, argc, argv);
 	ft_printf("This is %s!\n", cfg.exec);
-	ft_printf("traceroute to %s (%s), %d hops max, 60 byte packets\n",
-		cfg.dest, "IP_PLACEHOLDER", cfg.max_ttl);
+	ft_printf("traceroute to %s (%s), %d hops max, %d byte packets\n",
+		cfg.dest, "IP_PLACEHOLDER", cfg.max_ttl, PROBE_SIZE);
 	return (EXIT_SUCCESS);
 }
