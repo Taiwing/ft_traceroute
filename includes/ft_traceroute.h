@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 09:21:19 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 21:43:45 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,8 @@
 # include <limits.h>
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
-
-/*
-** t_trcrt_config: traceroute configuration
-**
-** exec: executable name
-** dest: destination argument
-** max_ttl: max number of hops
-** sprobes: number of probe packets to send simultaneously
-** nprobes: number of probe packets per hop
-** port: destination port for UDP probes
-*/
-typedef struct	s_trcrt_config
-{
-	const char	*exec;
-	const char	*dest;
-	int			max_ttl;
-	int			sprobes;
-	int			nprobes;
-	int			port;
-}				t_trcrt_config;
+# include <netdb.h>
+# include <arpa/inet.h>
 
 /*
 ** t_udphdr: UDP header structure
@@ -75,6 +57,30 @@ typedef struct	s_probe
 }				t_probe;
 
 /*
+** t_trcrt_config: traceroute configuration
+**
+** exec: executable name
+** dest: destination argument
+** destip: destination ip from getaddrinfo
+** destip_str: destination ip string from inet_ntop
+** max_ttl: max number of hops
+** sprobes: number of probe packets to send simultaneously
+** nprobes: number of probe packets per hop
+** port: destination port for UDP probes
+*/
+typedef struct			s_trcrt_config
+{
+	const char			*exec;
+	const char			*dest;
+	struct sockaddr		destip;
+	char				destip_str[INET_ADDRSTRLEN + 1];
+	int					max_ttl;
+	int					sprobes;
+	int					nprobes;
+	int					port;
+}						t_trcrt_config;
+
+/*
 ** traceroute macros
 */
 
@@ -86,7 +92,7 @@ typedef struct	s_probe
 # define	PORT_DEF			33434
 
 # define	CONFIG_DEF			{\
-	NULL, NULL, MAX_TTL_DEF, SPROBES_DEF, NPROBES_DEF, PORT_DEF\
+	NULL, NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF, NPROBES_DEF, PORT_DEF\
 }
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
