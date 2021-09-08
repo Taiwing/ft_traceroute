@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 08:58:19 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/08 19:43:33 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 	while ((opt = ft_getopt(argc, args, &optd)) >= 0 || argc == 1)
 		switch (opt)
 		{
-			case 'm': intopt(&cfg->max_ttl, &optd, 0, 255);				break;
-			case 'N': intopt(&cfg->sprobes, &optd, 0, SPROBES_MAX);		break;
-			case 'p': intopt(&cfg->port, &optd, 0, INT_MAX);			break;
+			case 'm': intopt(&cfg->max_ttl, &optd, 1, 255);				break;
+			case 'N': intopt(&cfg->sprobes, &optd, 1, SPROBES_MAX);		break;
+			case 'p': intopt(&cfg->port, &optd, 0, USHRT_MAX);			break;
 			case 'q': intopt(&cfg->nprobes, &optd, 1, NPROBES_MAX);		break;
 			default:
 				ft_printf(FT_TRACEROUTE_HELP, cfg->exec);
