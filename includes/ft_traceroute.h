@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 14:40:16 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 16:46:17 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,22 @@ typedef struct	s_probe_packet
 	t_udphdr	udp;
 	char		data[PROBE_UDP_DATA_LEN];
 }				t_probe_packet;
+
+/*
+** t_icmp_packet: icmp packet structure
+**
+** ip: ip header of response
+** icmp: icmp header
+** data_ip: ip header of the probe packet
+** probe: probe sent
+*/
+typedef struct		s_icmp_packet
+{
+	struct ip		ip;
+	struct icmphdr	icmp;
+	struct ip		data_ip;
+	t_probe_packet	probe;
+}					t_icmp_packet;
 
 enum e_probe_status	{ E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED, E_PRSTAT_TIMEOUT };
 

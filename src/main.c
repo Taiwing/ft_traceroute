@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 14:26:26 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 16:28:10 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,21 +39,8 @@ static void	get_destinfo(t_trcrt_config *cfg)
 		ft_exit(err, EXIT_FAILURE);
 }
 
-static t_trcrt_config	*get_cfg(t_trcrt_config *in)
+static void	cleanup(t_trcrt_config *cfg)
 {
-	static t_trcrt_config	*cfg = NULL;
-
-	if (in)
-		cfg = in;
-	return (cfg);
-}
-
-static void	cleanup(void)
-{
-	t_trcrt_config	*cfg = get_cfg(NULL);
-
-	if (!cfg)
-		return ;
 	if (cfg->send_socket > 0)
 		close(cfg->send_socket);
 	if (cfg->recv_socket > 0)
@@ -105,10 +92,10 @@ int			main(int argc, char **argv)
 {
 	char			*err = NULL;
 	t_trcrt_config	cfg = CONFIG_DEF;
+	void			cleanup_handler(void) { cleanup(&cfg); };
 
 	ft_exitmsg((char *)cfg.exec);
-	get_cfg(&cfg);
-	ft_atexit(cleanup);
+	ft_atexit(cleanup_handler);
 	cfg.dest = get_options(&cfg, argc, argv);
 	get_destinfo(&cfg);
 	if ((cfg.send_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
@@ -119,7 +106,7 @@ int			main(int argc, char **argv)
 		ft_exit(err, EXIT_FAILURE);
 	ft_printf("This is %s!\n", cfg.exec);
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
-		cfg.dest, cfg.destip_str, cfg.max_ttl, sizeof(t_probe_packet));
+		cfg.dest, cfg.destip_str, cfg.max_ttl, PROBE_SIZE);
 	ft_exit(NULL, EXIT_SUCCESS);
 	return (EXIT_SUCCESS);
 }
