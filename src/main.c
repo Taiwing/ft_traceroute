@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 14:14:52 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 14:26:26 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ static void	cleanup(void)
 		return ;
 	if (cfg->send_socket > 0)
 		close(cfg->send_socket);
-	if (cfg->receive_socket > 0)
-		close(cfg->receive_socket);
+	if (cfg->recv_socket > 0)
+		close(cfg->recv_socket);
 }
 
 static void	intopt(int *dest, t_optdata *optd, int min, int max)
@@ -103,6 +103,7 @@ static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 
 int			main(int argc, char **argv)
 {
+	char			*err = NULL;
 	t_trcrt_config	cfg = CONFIG_DEF;
 
 	ft_exitmsg((char *)cfg.exec);
@@ -110,8 +111,15 @@ int			main(int argc, char **argv)
 	ft_atexit(cleanup);
 	cfg.dest = get_options(&cfg, argc, argv);
 	get_destinfo(&cfg);
+	if ((cfg.send_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+		ft_asprintf(&err, "send_socket: socket: %s", strerror(errno));
+	else if ((cfg.recv_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)) < 0)
+		ft_asprintf(&err, "recv_socket: socket: %s", strerror(errno));
+	if (err)
+		ft_exit(err, EXIT_FAILURE);
 	ft_printf("This is %s!\n", cfg.exec);
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
 		cfg.dest, cfg.destip_str, cfg.max_ttl, sizeof(t_probe_packet));
+	ft_exit(NULL, EXIT_SUCCESS);
 	return (EXIT_SUCCESS);
 }

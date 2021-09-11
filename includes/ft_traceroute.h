@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 14:17:09 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 14:40:16 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <netinet/ip_icmp.h>
 # include <netdb.h>
 # include <arpa/inet.h>
+# include <errno.h>
 
 /*
 ** t_udphdr: UDP header structure
@@ -53,7 +54,6 @@ typedef struct	s_udphdr
 */
 typedef struct	s_probe_packet
 {
-	struct ip	ip;
 	t_udphdr	udp;
 	char		data[PROBE_UDP_DATA_LEN];
 }				t_probe_packet;
@@ -92,7 +92,7 @@ typedef struct			s_probe
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
 	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0,\
-	{{ 0 }}, {{ 0 }, { 0 }, { 0 }}\
+	{{ 0 }}, {{ 0 }, { 0 }}\
 }
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
@@ -117,7 +117,7 @@ typedef struct			s_probe
 ** port: destination port for UDP probes (port + id for sending probes)
 ** pid: seq value for UDP probes ip header (pid + id)
 ** send_socket: fd of SOCK_DGRAM/IPPROTO_UDP socket
-** receive_socket: fd of SOCK_DGRAM/IPPROTO_ICMP socket
+** recv_socket: fd of SOCK_DGRAM/IPPROTO_ICMP socket
 ** hop: last completed hop
 ** probe_id: id of the next probe to send (also total count of sent probes)
 ** hop_first_id: hop * nprobes is the id of the current hop's first probe
@@ -137,7 +137,7 @@ typedef struct			s_trcrt_config
 	int					port;
 	int					pid;
 	int					send_socket;
-	int					receive_socket;
+	int					recv_socket;
 	int					hop;
 	int					probe_id;
 	int					hop_first_id;
