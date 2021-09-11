@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/08 21:51:31 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 12:50:35 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 	while ((opt = ft_getopt(argc, args, &optd)) >= 0 || !argv[optd.optind])
 		switch (opt)
 		{
-			case 'm': intopt(&cfg->max_ttl, &optd, 1, 255);				break;
+			case 'm': intopt(&cfg->max_ttl, &optd, 1, MAX_TTL_MAX);		break;
 			case 'N': intopt(&cfg->sprobes, &optd, 1, SPROBES_MAX);		break;
 			case 'p': intopt(&cfg->port, &optd, 0, USHRT_MAX);			break;
 			case 'q': intopt(&cfg->nprobes, &optd, 1, NPROBES_MAX);		break;
@@ -84,12 +84,11 @@ int			main(int argc, char **argv)
 {
 	t_trcrt_config	cfg = CONFIG_DEF;
 
-	cfg.exec = ft_exec_name(*argv);
 	ft_exitmsg((char *)cfg.exec);
 	cfg.dest = get_options(&cfg, argc, argv);
 	get_destinfo(&cfg);
 	ft_printf("This is %s!\n", cfg.exec);
-	ft_printf("traceroute to %s (%s), %d hops max, %d byte packets\n",
-		cfg.dest, cfg.destip_str, cfg.max_ttl, PROBE_SIZE);
+	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
+		cfg.dest, cfg.destip_str, cfg.max_ttl, sizeof(t_probe_packet));
 	return (EXIT_SUCCESS);
 }
