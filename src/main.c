@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 12:50:35 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 14:14:52 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,27 @@ static void	get_destinfo(t_trcrt_config *cfg)
 	}
 	if (err)
 		ft_exit(err, EXIT_FAILURE);
+}
+
+static t_trcrt_config	*get_cfg(t_trcrt_config *in)
+{
+	static t_trcrt_config	*cfg = NULL;
+
+	if (in)
+		cfg = in;
+	return (cfg);
+}
+
+static void	cleanup(void)
+{
+	t_trcrt_config	*cfg = get_cfg(NULL);
+
+	if (!cfg)
+		return ;
+	if (cfg->send_socket > 0)
+		close(cfg->send_socket);
+	if (cfg->receive_socket > 0)
+		close(cfg->receive_socket);
 }
 
 static void	intopt(int *dest, t_optdata *optd, int min, int max)
@@ -85,6 +106,8 @@ int			main(int argc, char **argv)
 	t_trcrt_config	cfg = CONFIG_DEF;
 
 	ft_exitmsg((char *)cfg.exec);
+	get_cfg(&cfg);
+	ft_atexit(cleanup);
 	cfg.dest = get_options(&cfg, argc, argv);
 	get_destinfo(&cfg);
 	ft_printf("This is %s!\n", cfg.exec);

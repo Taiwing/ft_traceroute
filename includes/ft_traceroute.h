@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 12:50:45 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/11 14:17:09 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ typedef struct			s_probe
 
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0,\
+	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0,\
 	{{ 0 }}, {{ 0 }, { 0 }, { 0 }}\
 }
 
@@ -116,6 +116,8 @@ typedef struct			s_probe
 ** nprobes: number of probe packets per hop
 ** port: destination port for UDP probes (port + id for sending probes)
 ** pid: seq value for UDP probes ip header (pid + id)
+** send_socket: fd of SOCK_DGRAM/IPPROTO_UDP socket
+** receive_socket: fd of SOCK_DGRAM/IPPROTO_ICMP socket
 ** hop: last completed hop
 ** probe_id: id of the next probe to send (also total count of sent probes)
 ** hop_first_id: hop * nprobes is the id of the current hop's first probe
@@ -134,6 +136,8 @@ typedef struct			s_trcrt_config
 	int					nprobes;
 	int					port;
 	int					pid;
+	int					send_socket;
+	int					receive_socket;
 	int					hop;
 	int					probe_id;
 	int					hop_first_id;
