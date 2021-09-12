@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 17:43:21 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 17:47:43 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,8 @@ static char	*read_responses(t_trcrt_config *cfg)
 				+ (after.tv_usec - before.tv_usec);
 		if (!err)
 			err = read_response(cfg, &after);
+		FD_ZERO(&rfds);
+		FD_SET(cfg->recv_socket, &rfds);
 	}
 	if (sret < 0)
 		ft_asprintf(&err, "select: %s", strerror(errno));
