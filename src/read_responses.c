@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 19:44:41 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 21:16:59 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,13 @@ static char	*read_response(t_trcrt_config *cfg, struct timeval *ts)
 
 	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp, sizeof(resp), 0,
 		(struct sockaddr *)&respip, &len)) < 0)
-	{
 		ft_asprintf(&err, "recvfrom: %s", strerror(errno));
-		return (err);
-	}
-	else if (rd < (int)RESP_HEADERS_SEQ
+	if (err || rd < (int)RESP_HEADERS_SEQ
 		|| (id = check_resp(cfg, &resp, &respip)) < 0)
-		return (NULL);
+		return (err);
 	ft_memcpy((void *)&cfg->probes[id].received_ts, (void *)ts, sizeof(*ts));
+	ft_memcpy((void *)&cfg->probes[id].received_ip, (void *)&respip.sin_addr,
+		sizeof(struct in_addr));
 	if (resp.icmp.type == ICMP_TIME_EXCEEDED)
 		cfg->probes[id].status = E_PRSTAT_RECEIVED_TTL;
 	else if (resp.icmp.code < ICMP_PORT_UNREACH)
@@ -89,7 +88,6 @@ static char	*read_response(t_trcrt_config *cfg, struct timeval *ts)
 	else
 		cfg->probes[id].status = E_PRSTAT_UNREACH_NET + resp.icmp.code - 1;
 	--cfg->pending_probes;
-	ft_printf("received packet %d\n", id);
 	return (err);
 }
 

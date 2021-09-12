@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 16:18:42 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 21:03:07 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,6 @@ int			main(int argc, char **argv)
 		ft_asprintf(&err, "recv_socket: socket: %s", strerror(errno));
 	if (err)
 		ft_exit(err, EXIT_FAILURE);
-	ft_printf("This is %s!\n", cfg.exec);
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
 		cfg.dest, cfg.destip_str, cfg.max_ttl, PROBE_SIZE);
 	for (int i = 2, byte = 0; i < (int)PROBE_UDP_DATA_LEN; ++i, ++byte)

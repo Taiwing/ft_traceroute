@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 19:50:16 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 20:27:27 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,10 @@ void		traceroute(t_trcrt_config *cfg)
 		//check pending probes and set timeouts if needed
 		if (!err && cfg->pending_probes)
 			err = check_pending_probes(cfg);
-		//print current hop if it is completed
+		//print hops if some are completed
+		if (!err)
+			while (print_hop(cfg))
+				cfg->hop_first_id += cfg->nprobes;
 	}
 	if (err)
 		ft_exit(err, EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 19:51:41 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 20:59:55 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,6 @@ enum e_probe_status	{
 	E_PRSTAT_UNREACH_PROTOCOL, E_PRSTAT_UNREACH_NEEDFRAG,
 	E_PRSTAT_UNREACH_SRCFAIL
 };
-
-//TODO: move this to the file where printing is going to be
-// corresponding errors (from E_PRSTAT_TIMEOUT to E_PRSTAT_UNREACH_SRCFAIL)
-//const char	*prstat_err[] = { "*", "!N", "!H", "!P", "!F", "!S", NULL };
 
 /*
 ** t_probe: probe info and status structure
@@ -182,5 +178,6 @@ typedef struct			s_trcrt_config
 void	traceroute(t_trcrt_config *cfg);
 char	*read_responses(t_trcrt_config *cfg);
 int		ts_diff(struct timeval *res, struct timeval *a, struct timeval *b);
+int		print_hop(t_trcrt_config *cfg);
 
 #endif

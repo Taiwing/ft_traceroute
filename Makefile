@@ -13,6 +13,7 @@ NAME		=	ft_traceroute
 ############################## SOURCES #########################################
 
 SRCC			=	main.c\
+					print_hop.c\
 					read_responses.c\
 					traceroute.c\
 
@@ -35,6 +36,7 @@ $(SUB1D)/libft.a:
 	make -C $(SUB1D)
 
 main.o: ft_traceroute.h libft.h
+print_hop.o: ft_traceroute.h libft.h
 read_responses.o: ft_traceroute.h libft.h
 traceroute.o: ft_traceroute.h libft.h
 %.o: %.c
