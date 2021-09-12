@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 16:46:17 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 11:45:09 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <netinet/ip_icmp.h>
 # include <netdb.h>
 # include <arpa/inet.h>
+# include <sys/time.h>
 # include <errno.h>
 
 /*
@@ -41,22 +42,9 @@ typedef struct	s_udphdr
 ** Probe macros
 */
 
-# define	PROBE_SIZE			60
+# define	PROBE_SIZE			1024
 # define	PROBE_UDP_LEN		(PROBE_SIZE - sizeof(struct ip))
 # define	PROBE_UDP_DATA_LEN	(PROBE_UDP_LEN - sizeof(t_udphdr))
-
-/*
-** t_probe_packet: udp packet probe structure
-**
-** ip: ip header
-** udp: udp header
-** data: data buffer
-*/
-typedef struct	s_probe_packet
-{
-	t_udphdr	udp;
-	char		data[PROBE_UDP_DATA_LEN];
-}				t_probe_packet;
 
 /*
 ** t_icmp_packet: icmp packet structure
@@ -71,7 +59,8 @@ typedef struct		s_icmp_packet
 	struct ip		ip;
 	struct icmphdr	icmp;
 	struct ip		data_ip;
-	t_probe_packet	probe;
+	t_udphdr		data_udp;
+	char			data[PROBE_UDP_DATA_LEN];
 }					t_icmp_packet;
 
 enum e_probe_status	{ E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED, E_PRSTAT_TIMEOUT };
@@ -80,6 +69,8 @@ enum e_probe_status	{ E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED, E_PRSTAT_TIMEOUT };
 ** t_probe: probe info and status structure
 **
 ** status: request sent, response received or timeout
+** port: port + id
+** seq: pid + id
 ** sent_ts: timestamp when sent (gettimeofday)
 ** received_ts: timestamp if received (gettimeofday)
 ** received_ip: source ip of response if any
@@ -87,6 +78,8 @@ enum e_probe_status	{ E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED, E_PRSTAT_TIMEOUT };
 typedef struct			s_probe
 {
 	enum e_probe_status	status;
+	uint16_t			port;
+	uint16_t			seq;
 	struct timeval		sent_ts;
 	struct timeval		received_ts;
 	struct in_addr		received_ip;
@@ -107,8 +100,7 @@ typedef struct			s_probe
 
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0,\
-	{{ 0 }}, {{ 0 }, { 0 }}\
+	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
 }
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
@@ -134,6 +126,8 @@ typedef struct			s_probe
 ** pid: seq value for UDP probes ip header (pid + id)
 ** send_socket: fd of SOCK_DGRAM/IPPROTO_UDP socket
 ** recv_socket: fd of SOCK_DGRAM/IPPROTO_ICMP socket
+** max_probes: total maximum count of probes to send (max_ttl * nprobes)
+** reached: boolean set to true when destination is reached
 ** hop: last completed hop
 ** probe_id: id of the next probe to send (also total count of sent probes)
 ** hop_first_id: hop * nprobes is the id of the current hop's first probe
@@ -145,7 +139,7 @@ typedef struct			s_trcrt_config
 {
 	const char			*exec;
 	const char			*dest;
-	struct sockaddr		destip;
+	struct sockaddr_in	destip;
 	char				destip_str[INET_ADDRSTRLEN + 1];
 	int					max_ttl;
 	int					sprobes;
@@ -154,12 +148,20 @@ typedef struct			s_trcrt_config
 	int					pid;
 	int					send_socket;
 	int					recv_socket;
+	int					max_probes;
+	int					reached;
 	int					hop;
 	int					probe_id;
 	int					hop_first_id;
 	int					pending_probes;
 	t_probe				probes[PROBES_MAX];
-	t_probe_packet		probe_packet;
+	char				probe_data[PROBE_UDP_DATA_LEN];
 }						t_trcrt_config;
+
+/*
+** ft_traceroute functions
+*/
+
+void	traceroute(t_trcrt_config *cfg);
 
 #endif

@@ -13,6 +13,7 @@ NAME		=	ft_traceroute
 ############################## SOURCES #########################################
 
 SRCC			=	main.c\
+					traceroute.c\
 
 ODIR			=	obj
 OBJ				=	$(patsubst %.c,%.o,$(SRCC))
@@ -33,6 +34,7 @@ $(SUB1D)/libft.a:
 	make -C $(SUB1D)
 
 main.o: ft_traceroute.h libft.h
+traceroute.o: ft_traceroute.h libft.h
 %.o: %.c
 	@mkdir -p $(ODIR)
 	$(CC) -c $(CFLAGS) $< $(HFLAGS) -o $(ODIR)/$@

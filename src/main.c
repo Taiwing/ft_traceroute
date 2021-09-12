@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/11 16:28:10 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 11:53:58 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ static void	get_destinfo(t_trcrt_config *cfg)
 	else
 	{
 		ft_memcpy((void *)&cfg->destip, (void *)destinfo->ai_addr,
-			sizeof(struct sockaddr));
+			sizeof(struct sockaddr_in));
 		freeaddrinfo(destinfo);
-		if (!(ip = inet_ntoa(((struct sockaddr_in *)&cfg->destip)->sin_addr)))
+		if (!(ip = inet_ntoa(cfg->destip.sin_addr)))
 			ft_asprintf(&err, "inet_ntoa: failed to convert ip to string");
 		else
 			ft_strncpy(cfg->destip_str, ip, INET_ADDRSTRLEN);
@@ -107,6 +107,9 @@ int			main(int argc, char **argv)
 	ft_printf("This is %s!\n", cfg.exec);
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
 		cfg.dest, cfg.destip_str, cfg.max_ttl, PROBE_SIZE);
+	for (int i = 0, byte = 0; i < (int)PROBE_UDP_DATA_LEN; ++i, ++byte)
+		cfg.probe_data[i] = (byte % 0x40) + 0x40;
+	traceroute(&cfg);
 	ft_exit(NULL, EXIT_SUCCESS);
 	return (EXIT_SUCCESS);
 }
