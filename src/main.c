@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 13:29:58 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 16:18:42 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,12 @@ int			main(int argc, char **argv)
 	ft_exitmsg((char *)cfg.exec);
 	ft_atexit(cleanup_handler);
 	cfg.dest = get_options(&cfg, argc, argv);
+	if (getuid())
+		ft_exit("user is not root", EXIT_FAILURE);
 	get_destinfo(&cfg);
 	if ((cfg.send_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 		ft_asprintf(&err, "send_socket: socket: %s", strerror(errno));
-	else if ((cfg.recv_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)) < 0)
+	else if ((cfg.recv_socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
 		ft_asprintf(&err, "recv_socket: socket: %s", strerror(errno));
 	if (err)
 		ft_exit(err, EXIT_FAILURE);

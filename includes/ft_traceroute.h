@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 11:45:09 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 17:18:06 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,18 @@ typedef struct	s_udphdr
 # define	PROBE_SIZE			1024
 # define	PROBE_UDP_LEN		(PROBE_SIZE - sizeof(struct ip))
 # define	PROBE_UDP_DATA_LEN	(PROBE_UDP_LEN - sizeof(t_udphdr))
+# define	RESP_HEADERS		(sizeof(struct ip) + sizeof(struct icmphdr)\
+		+ sizeof(struct ip) + sizeof(t_udphdr))
+# define	RESP_HEADERS_SEQ	(RESP_HEADERS + sizeof(uint16_t))
 
 /*
 ** t_icmp_packet: icmp packet structure
 **
 ** ip: ip header of response
-** icmp: icmp header
+** icmp: icmp header of response
 ** data_ip: ip header of the probe packet
-** probe: probe sent
+** data_udp: udp header of the probe packet
+** data: data of the probe packet
 */
 typedef struct		s_icmp_packet
 {
@@ -63,14 +67,24 @@ typedef struct		s_icmp_packet
 	char			data[PROBE_UDP_DATA_LEN];
 }					t_icmp_packet;
 
-enum e_probe_status	{ E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED, E_PRSTAT_TIMEOUT };
+/*
+** enum e_probe_status: list of every possible states for a probe
+*/
+enum e_probe_status	{
+	E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED_TTL, E_PRSTAT_RECEIVED_PORT,
+	E_PRSTAT_TIMEOUT, E_PRSTAT_UNREACH_NET, E_PRSTAT_UNREACH_HOST,
+	E_PRSTAT_UNREACH_PROTOCOL, E_PRSTAT_UNREACH_NEEDFRAG,
+	E_PRSTAT_UNREACH_SRCFAIL
+};
+
+//TODO: move this to the file where printing is going to be
+// corresponding errors (from E_PRSTAT_TIMEOUT to E_PRSTAT_UNREACH_SRCFAIL)
+//const char	*prstat_err[] = { "*", "!N", "!H", "!P", "!F", "!S", NULL };
 
 /*
 ** t_probe: probe info and status structure
 **
 ** status: request sent, response received or timeout
-** port: port + id
-** seq: pid + id
 ** sent_ts: timestamp when sent (gettimeofday)
 ** received_ts: timestamp if received (gettimeofday)
 ** received_ip: source ip of response if any
@@ -78,8 +92,6 @@ enum e_probe_status	{ E_PRSTAT_SENT = 0, E_PRSTAT_RECEIVED, E_PRSTAT_TIMEOUT };
 typedef struct			s_probe
 {
 	enum e_probe_status	status;
-	uint16_t			port;
-	uint16_t			seq;
 	struct timeval		sent_ts;
 	struct timeval		received_ts;
 	struct in_addr		received_ip;
@@ -102,6 +114,9 @@ typedef struct			s_probe
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
 	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
 }
+
+// is equal to 505ms
+# define	TRCRT_TMOUT			505000
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
 # define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n"\
