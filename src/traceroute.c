@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 19:34:47 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 19:50:16 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,20 +49,34 @@ static char	*send_probes(t_trcrt_config *cfg)
 	return (err);
 }
 
-/*
 static char	*check_pending_probes(t_trcrt_config *cfg)
 {
-	struct timeval	now = { 0 };
+	int				timeout = 0;
 	char			*err = NULL;
+	struct timeval	now = { 0 }, diff = { 0 };
 
 	if (gettimeofday(&now, NULL) < 0)
 	{
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
 		return (err);
 	}
-	
+	for (int i = cfg->probe_id - 1; i >= 0 && cfg->pending_probes; --i)
+	{
+		if (cfg->probes[i].status)
+			continue ;
+		if (!timeout)
+		{
+			ts_diff(&diff, &now, &cfg->probes[i].sent_ts);
+			timeout = diff.tv_sec >= TRCRT_RESP_TMOUT;
+		}
+		if (timeout)
+		{
+			cfg->probes[i].status = E_PRSTAT_TIMEOUT;
+			--cfg->pending_probes;
+		}
+	}
+	return (err);
 }
-*/
 
 void		traceroute(t_trcrt_config *cfg)
 {
@@ -80,8 +94,8 @@ void		traceroute(t_trcrt_config *cfg)
 		if (!err)
 			err = read_responses(cfg);
 		//check pending probes and set timeouts if needed
-		//if (!err && cfg->pending_probes)
-		//	err = check_pending_probes(cfg);
+		if (!err && cfg->pending_probes)
+			err = check_pending_probes(cfg);
 		//print current hop if it is completed
 	}
 	if (err)

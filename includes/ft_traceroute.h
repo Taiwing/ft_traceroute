@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 17:52:11 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 19:51:41 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,10 @@ typedef struct			s_probe
 	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
 }
 
-// is equal to 505ms
-# define	TRCRT_TMOUT			505000
+// select timeout in microseconds (is equal to 505ms)
+# define	TRCRT_SLCT_TMOUT	505000
+// package response in seconds
+# define	TRCRT_RESP_TMOUT	5
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
 # define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n"\
@@ -179,5 +181,6 @@ typedef struct			s_trcrt_config
 
 void	traceroute(t_trcrt_config *cfg);
 char	*read_responses(t_trcrt_config *cfg);
+int		ts_diff(struct timeval *res, struct timeval *a, struct timeval *b);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 19:35:49 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 19:44:41 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ char		*read_responses(t_trcrt_config *cfg)
 	FD_SET(cfg->recv_socket, &rfds);
 	if (!err && gettimeofday(&before, NULL) < 0)
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-	while (!err && !to.tv_sec && to.tv_usec < TRCRT_TMOUT
+	while (!err && !to.tv_sec && to.tv_usec < TRCRT_SLCT_TMOUT
 		&& (sret = select(cfg->recv_socket + 1, &rfds, NULL, NULL, &to)) > 0)
 	{
 		if (!err && gettimeofday(&after, NULL) < 0)
