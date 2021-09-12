@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 11:56:18 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/12 13:39:18 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,10 @@ static char	*send_probes(t_trcrt_config *cfg)
 	{
 		cfg->probes[cfg->probe_id].port =
 			(cfg->port + cfg->probe_id) % (USHRT_MAX + 1);
-		cfg->probes[cfg->probe_id].seq=
+		cfg->probes[cfg->probe_id].seq =
 			(cfg->pid + cfg->probe_id) % (USHRT_MAX + 1);
+		ft_memcpy((void *)cfg->probe_data,
+			(void *)&cfg->probes[cfg->probe_id].seq, sizeof(uint16_t));
 		if ((err = send_probe(cfg)))
 			break ;
 		++cfg->probe_id;
