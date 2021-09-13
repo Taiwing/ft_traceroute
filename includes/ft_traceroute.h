@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 22:23:07 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 23:27:01 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ typedef struct			s_probe
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
 	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000,\
-	0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
+	0, 0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
 }
 
 // select timeout in microseconds (is equal to 505ms)
@@ -142,6 +142,7 @@ typedef struct			s_probe
 ** recv_socket: fd of SOCK_DGRAM/IPPROTO_ICMP socket
 ** max_probes: total maximum count of probes to send (max_ttl * nprobes)
 ** reached: boolean set to true when destination is reached
+** unreachable: boolean set to true when destination is unreachable
 ** hop: last completed hop
 ** probe_id: id of the next probe to send (also total count of sent probes)
 ** hop_first_id: hop * nprobes is the id of the current hop's first probe
@@ -164,6 +165,7 @@ typedef struct			s_trcrt_config
 	int					recv_socket;
 	int					max_probes;
 	int					reached;
+	int					unreachable;
 	int					hop;
 	int					probe_id;
 	int					hop_first_id;

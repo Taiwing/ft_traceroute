@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 22:38:00 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 23:26:21 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ void		traceroute(t_trcrt_config *cfg)
 	char			*err = NULL;
 
 	cfg->max_probes = cfg->max_ttl * cfg->nprobes;
-	while (!err && !cfg->reached && (cfg->pending_probes
-		|| cfg->probe_id < cfg->max_probes))
+	while (!err && !cfg->reached && !cfg->unreachable
+		&& (cfg->pending_probes || cfg->probe_id < cfg->max_probes))
 	{
 		//send as many probes as possible
 		if (cfg->pending_probes < cfg->sprobes
@@ -98,7 +98,7 @@ void		traceroute(t_trcrt_config *cfg)
 			err = check_pending_probes(cfg);
 		//print hops if some are completed
 		if (!err)
-			while (!cfg->reached && print_hop(cfg))
+			while (!cfg->reached && !cfg->unreachable && print_hop(cfg))
 				cfg->hop_first_id += cfg->nprobes;
 	}
 	if (err)
