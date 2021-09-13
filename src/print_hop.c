@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 20:27:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 23:38:00 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 23:40:08 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	print_response(t_trcrt_config *cfg, int i)
 
 	if (cfg->probes[i].status == E_PRSTAT_TIMEOUT)
 	{
-		ft_printf(" *");
+		ft_printf("%s*", i == cfg->hop_first_id ? "" : " ");
 		return ;
 	}
 	ts_diff(&ts, &cfg->probes[i].received_ts, &cfg->probes[i].sent_ts);
