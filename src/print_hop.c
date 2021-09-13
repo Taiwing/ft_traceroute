@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 20:27:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 23:33:21 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 23:38:00 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int			print_hop(t_trcrt_config *cfg)
 	for (int i = cfg->hop_first_id; i <= hop_last_id; ++i)
 		if (!cfg->probes[i].status)
 			return (0);
-	ft_printf(" %d  ", ++cfg->hop);
+	ft_printf("%2d  ", ++cfg->hop);
 	for (int i = cfg->hop_first_id; i <= hop_last_id; ++i)
 	{
 		print_response(cfg, i);
