@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 20:59:55 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 22:23:07 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,8 @@ typedef struct			s_probe
 
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, getpid(), 0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
+	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000,\
+	0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
 }
 
 // select timeout in microseconds (is equal to 505ms)
@@ -136,7 +137,7 @@ typedef struct			s_probe
 ** sprobes: number of probe packets to send simultaneously
 ** nprobes: number of probe packets per hop
 ** port: destination port for UDP probes (port + id for sending probes)
-** pid: seq value for UDP probes ip header (pid + id)
+** ident: ((pid % 0xffff) | 0x8000) seq for UDP ip headers (ident + id)
 ** send_socket: fd of SOCK_DGRAM/IPPROTO_UDP socket
 ** recv_socket: fd of SOCK_DGRAM/IPPROTO_ICMP socket
 ** max_probes: total maximum count of probes to send (max_ttl * nprobes)
@@ -158,7 +159,7 @@ typedef struct			s_trcrt_config
 	int					sprobes;
 	int					nprobes;
 	int					port;
-	int					pid;
+	int					ident;
 	int					send_socket;
 	int					recv_socket;
 	int					max_probes;

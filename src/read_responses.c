@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 21:16:59 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 22:23:21 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,12 @@ static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
 	int			id, seqid;
 	uint16_t	seq, port;
 
-	ft_memcpy((void *)&seq, (void *)resp + RESP_HEADERS, sizeof(uint16_t));
+	ft_memcpy((void *)&seq, (void *)resp->data, sizeof(uint16_t));
 	port = ntohs(resp->data_udp.dstp);
 	id = cfg->port <= (int)port ? (int)port - cfg->port
-		: USHRT_MAX + 1 - cfg->port + (int)port;
-	seqid = cfg->pid <= (int)seq ? (int)seq - cfg->pid
-		: USHRT_MAX + 1 - cfg->pid + (int)seq;
+		: 0xffff - cfg->port + (int)port;
+	seqid = cfg->ident <= (int)seq ? (int)seq - cfg->ident
+		: 0xffff - cfg->ident + (int)seq;
 	if (id != seqid || cfg->probes[id].status)
 		return (-1);
 	else if (resp->icmp.type == ICMP_TIME_EXCEEDED)
