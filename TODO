@@ -1,0 +1,6 @@
+- make packet timeout adaptative like in the original (do not wait 5s for a
+  package if preceding ones came within 2ms)
+- implement reverse DNS for the hop IPs (find out how to do this)
+- test the hell out of the options
+- oh and do not forget to reset probe size to default 60 bytes, not 1024 bytes
+  (maybe handle size like the original, with a command line argument)
