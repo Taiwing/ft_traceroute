@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 22:23:21 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/13 23:02:49 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
 		: 0xffff - cfg->port + (int)port;
 	seqid = cfg->ident <= (int)seq ? (int)seq - cfg->ident
 		: 0xffff - cfg->ident + (int)seq;
-	if (id != seqid || cfg->probes[id].status)
+	if ((id != seqid && resp->icmp.type != ICMP_DEST_UNREACH)
+		|| id >= PROBES_MAX || cfg->probes[id].status)
 		return (-1);
 	else if (resp->icmp.type == ICMP_TIME_EXCEEDED)
 		return (resp->icmp.code == ICMP_EXC_TTL ? id : -1);
@@ -73,7 +74,7 @@ static char	*read_response(t_trcrt_config *cfg, struct timeval *ts)
 	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp, sizeof(resp), 0,
 		(struct sockaddr *)&respip, &len)) < 0)
 		ft_asprintf(&err, "recvfrom: %s", strerror(errno));
-	if (err || rd < (int)RESP_HEADERS_SEQ
+	if (err || rd < (int)RESP_HEADERS
 		|| (id = check_resp(cfg, &resp, &respip)) < 0)
 		return (err);
 	ft_memcpy((void *)&cfg->probes[id].received_ts, (void *)ts, sizeof(*ts));
