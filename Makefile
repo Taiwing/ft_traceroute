@@ -12,7 +12,8 @@ NAME		=	ft_traceroute
 
 ############################## SOURCES #########################################
 
-SRCC			=	main.c\
+SRCC			=	options.c\
+					main.c\
 					print_hop.c\
 					time.c\
 					read_responses.c\
@@ -36,6 +37,7 @@ $(NAME): $(SUB1D)/libft.a $(ODIR) $(OBJ)
 $(SUB1D)/libft.a:
 	make -C $(SUB1D)
 
+options.o: ft_traceroute.h libft.h
 main.o: ft_traceroute.h libft.h
 print_hop.o: ft_traceroute.h libft.h
 time.o: ft_traceroute.h libft.h

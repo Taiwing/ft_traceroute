@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 17:09:43 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 18:02:52 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,7 @@ typedef struct			s_trcrt_config
 ** ft_traceroute functions
 */
 
+char	*get_options(t_trcrt_config *cfg, int argc, char **argv);
 void	traceroute(t_trcrt_config *cfg);
 char	*read_responses(t_trcrt_config *cfg);
 char	*check_pending_probes(t_trcrt_config *cfg);
