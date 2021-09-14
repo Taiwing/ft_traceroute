@@ -1,6 +1,7 @@
-- make packet timeout adaptative like in the original (do not wait 5s for a
-  package if preceding ones came within 2ms)
-- implement reverse DNS for the hop IPs (find out how to do this)
+- fix timeout when two hops in a row are 'empty' (search until the first
+  valid hop in check pending probes) (or maybe this is because ft_traceroute
+  has no fallback whereas system traceroute tries to ping the remote host
+  when UDP fails, so maybe do that ?)
 - test the hell out of the options
 - oh and do not forget to reset probe size to default 60 bytes, not 1024 bytes
   (maybe handle size like the original, with a command line argument)
