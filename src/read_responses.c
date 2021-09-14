@@ -6,35 +6,11 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 23:02:49 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 14:39:53 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
-
-/*
-** ts_diff: timestamp substraction
-**
-** Substracts b from a and put the result in res. a must therefore be bigger
-** than b (so a later timestamp), otherwise ts_diff will return -1 and res
-** will be set to 0.
-*/
-int			ts_diff(struct timeval *res, struct timeval *a, struct timeval *b)
-{
-	ft_bzero((void *)res, sizeof(struct timeval));
-	if (b->tv_sec > a->tv_sec
-		|| (b->tv_sec == a->tv_sec && b->tv_usec > a->tv_usec))
-		return (-1);
-	res->tv_sec = a->tv_sec - b->tv_sec;
-	if (a->tv_usec >= b->tv_usec)
-		res->tv_usec = a->tv_usec - b->tv_usec;
-	else
-	{
-		--res->tv_sec;
-		res->tv_usec = 1000000 - b->tv_usec + a->tv_usec;
-	}
-	return (0);
-}
 
 static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
 	struct sockaddr_in *respip)
@@ -103,7 +79,7 @@ char		*read_responses(t_trcrt_config *cfg)
 	FD_SET(cfg->recv_socket, &rfds);
 	if (!err && gettimeofday(&before, NULL) < 0)
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-	while (!err && !to.tv_sec && to.tv_usec < TRCRT_SLCT_TMOUT
+	while (!err && !to.tv_sec && to.tv_usec < SLCT_TMOUT
 		&& (sret = select(cfg->recv_socket + 1, &rfds, NULL, NULL, &to)) > 0)
 	{
 		if (!err && gettimeofday(&after, NULL) < 0)

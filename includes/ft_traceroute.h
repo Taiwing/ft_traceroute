@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 23:27:01 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 14:40:16 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,17 +105,19 @@ typedef struct			s_probe
 # define	NPROBES_MAX			10
 # define	PORT_DEF			33434
 # define	PROBES_MAX			(MAX_TTL_MAX * NPROBES_MAX)
+# define	MAX_DEF				5.0
+# define	HERE_DEF			3.0
+# define	NEAR_DEF			10.0
 
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000,\
-	0, 0, 0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }\
+	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0,\
+	0, 0, 0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0\
 }
 
 // select timeout in microseconds (is equal to 505ms)
-# define	TRCRT_SLCT_TMOUT	505000
+# define	SLCT_TMOUT		505000
 // package response in seconds
-# define	TRCRT_RESP_TMOUT	5
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
 # define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n"\
@@ -149,6 +151,10 @@ typedef struct			s_probe
 ** pending_probes: number of probes sent and waiting for a response
 ** probes: array of probes (id is the index)
 ** probe_packet: actual probe packet to send
+** max: multiplicative factor for max timeout (max is in s)
+** here: multiplicative factor for adaptative timeout on same hop
+** near: multiplicative factor for adaptative timeout on next hop
+** max_timeout: maximum timeout value for probe in ms (max * 1000.0)
 */
 typedef struct			s_trcrt_config
 {
@@ -172,6 +178,10 @@ typedef struct			s_trcrt_config
 	int					pending_probes;
 	t_probe				probes[PROBES_MAX];
 	char				probe_data[PROBE_UDP_DATA_LEN];
+	double				max;
+	double				here;
+	double				near;
+	double				max_timeout;
 }						t_trcrt_config;
 
 /*
@@ -180,6 +190,8 @@ typedef struct			s_trcrt_config
 
 void	traceroute(t_trcrt_config *cfg);
 char	*read_responses(t_trcrt_config *cfg);
+char	*check_pending_probes(t_trcrt_config *cfg);
+double	ts_msdiff(struct timeval *a, struct timeval *b);
 int		ts_diff(struct timeval *res, struct timeval *a, struct timeval *b);
 int		print_hop(t_trcrt_config *cfg);
 

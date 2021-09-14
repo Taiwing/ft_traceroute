@@ -14,6 +14,7 @@ NAME		=	ft_traceroute
 
 SRCC			=	main.c\
 					print_hop.c\
+					time.c\
 					read_responses.c\
 					traceroute.c\
 
@@ -37,6 +38,7 @@ $(SUB1D)/libft.a:
 
 main.o: ft_traceroute.h libft.h
 print_hop.o: ft_traceroute.h libft.h
+time.o: ft_traceroute.h libft.h
 read_responses.o: ft_traceroute.h libft.h
 traceroute.o: ft_traceroute.h libft.h
 %.o: %.c

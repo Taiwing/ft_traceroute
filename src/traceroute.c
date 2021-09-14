@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 23:26:21 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 14:25:17 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,40 +49,12 @@ static char	*send_probes(t_trcrt_config *cfg)
 	return (err);
 }
 
-static char	*check_pending_probes(t_trcrt_config *cfg)
-{
-	int				timeout = 0;
-	char			*err = NULL;
-	struct timeval	now = { 0 }, diff = { 0 };
-
-	if (gettimeofday(&now, NULL) < 0)
-	{
-		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-		return (err);
-	}
-	for (int i = cfg->probe_id - 1; i >= 0 && cfg->pending_probes; --i)
-	{
-		if (cfg->probes[i].status)
-			continue ;
-		if (!timeout)
-		{
-			ts_diff(&diff, &now, &cfg->probes[i].sent_ts);
-			timeout = diff.tv_sec >= TRCRT_RESP_TMOUT;
-		}
-		if (timeout)
-		{
-			cfg->probes[i].status = E_PRSTAT_TIMEOUT;
-			--cfg->pending_probes;
-		}
-	}
-	return (err);
-}
-
 void		traceroute(t_trcrt_config *cfg)
 {
 	char			*err = NULL;
 
 	cfg->max_probes = cfg->max_ttl * cfg->nprobes;
+	cfg->max_timeout = cfg->max * 1000.0;
 	while (!err && !cfg->reached && !cfg->unreachable
 		&& (cfg->pending_probes || cfg->probe_id < cfg->max_probes))
 	{

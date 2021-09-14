@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 20:27:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/13 23:40:08 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 14:34:45 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,13 @@ const char	*g_prstat_err[] = { "!N", "!H", "!P", "!F", "!S", NULL };
 static void	print_response(t_trcrt_config *cfg, int i)
 {
 	double			time;
-	struct timeval	ts = { 0 };
 
 	if (cfg->probes[i].status == E_PRSTAT_TIMEOUT)
 	{
 		ft_printf("%s*", i == cfg->hop_first_id ? "" : " ");
 		return ;
 	}
-	ts_diff(&ts, &cfg->probes[i].received_ts, &cfg->probes[i].sent_ts);
-	time = (double)ts.tv_sec * 1000.0 + (double)ts.tv_usec / 1000.0;
+	time = ts_msdiff(&cfg->probes[i].received_ts, &cfg->probes[i].sent_ts);
 	if (i == cfg->hop_first_id
 		|| cfg->probes[i].received_ip.s_addr
 		!= cfg->probes[i-1].received_ip.s_addr)
