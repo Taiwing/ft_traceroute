@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 18:03:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 18:56:38 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 18:59:53 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ static void	set_wait_times(t_trcrt_config *cfg, char *arg)
 		floatopt(&cfg->near, start, end - start);
 	if (err)
 		ft_exit(err, EXIT_FAILURE);
-	ft_printf("max: %g\nhere: %g\nnear: %g\n", cfg->max, cfg->here, cfg->near);
 }
 
 static void	intopt(int *dest, t_optdata *optd, int min, int max)
