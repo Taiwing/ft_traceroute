@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 14:40:16 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 17:09:43 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,14 +119,22 @@ typedef struct			s_probe
 # define	SLCT_TMOUT		505000
 // package response in seconds
 
-# define	FT_TRACEROUTE_OPT	"hm:N:p:q:"
-# define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n"\
-	"Options:\n\t<destination>\t\thostname or IPv4 address\n"\
-	"\t-h\t\t\tprint help and exit\n"\
-	"\t-m max_ttl\t\tset max number of hops (max TTL)\n"\
-	"\t-N sprobes\t\tnumber of probe packets sent out simultaneously\n"\
-	"\t-p port\t\t\tdestination port base for UDP probes\n"\
-	"\t-q nprobes\t\tnumber of probe packets per hop\n"
+# define	FT_TRACEROUTE_OPT	"hm:N:p:q:w:"
+# define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n\n"\
+	"Options:\n\t<destination>\t\thostname or IPv4 address\n\n"\
+	"\t-h\t\t\tPrint help and exit.\n\n"\
+	"\t-m max_ttl\t\tSet max number of hops and TTL value (def: %d).\n\n"\
+	"\t-N sprobes\t\tNumber of probe packets sent out simultaneously (def: %d)"\
+	".\n\n\t-p port\t\t\tDestination port base for UDP probes (def: %d).\n\n"\
+	"\t-q nprobes\t\tNumber of probe packets per hop (def: %d).\n\n"\
+	"\t-w max[,here,near]\tThree float values separated by ',' or '/'."\
+	" 'max' is the\n\t\t\t\tmaximum time, in seconds, to wait for a"\
+	" response in any\n\t\t\t\tcase (def: %.1f). The  optional 'here'"\
+	" (def: %.1f) specifies\n\t\t\t\ta factor to multiply the round trip"\
+	" time of an already\n\t\t\t\treceived response from the same hop"\
+	" and sets it as a new\n\t\t\t\ttimeout value (if less than max)."\
+	" 'near' is the same as\n\t\t\t\t'here' except that it will look"\
+	" at the next hop (def: %.1f).\n"
 
 /*
 ** t_trcrt_config: traceroute configuration

@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/12 21:03:07 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 16:57:07 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,9 @@ static char	*get_options(t_trcrt_config *cfg, int argc, char **argv)
 			case 'p': intopt(&cfg->port, &optd, 0, USHRT_MAX);			break;
 			case 'q': intopt(&cfg->nprobes, &optd, 1, NPROBES_MAX);		break;
 			default:
-				ft_printf(FT_TRACEROUTE_HELP, cfg->exec);
+				ft_printf(FT_TRACEROUTE_HELP, cfg->exec, MAX_TTL_DEF,
+					SPROBES_DEF, PORT_DEF, NPROBES_DEF, MAX_DEF, HERE_DEF,
+					NEAR_DEF);
 				ft_exit(NULL, opt != 'h');
 		}
 	ft_memdel((void **)&args);
