@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 13:48:54 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 15:02:44 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/14 19:15:43 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char	*check_pending_probes(t_trcrt_config *cfg)
 	if (gettimeofday(&now, NULL) < 0)
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
 	for (int i = cfg->hop_first_id; !err && cfg->pending_probes
-		&& i + cfg->nprobes < cfg->probe_id; i += cfg->nprobes)
+		&& i + cfg->nprobes <= cfg->probe_id; i += cfg->nprobes)
 	{
 		timeout = get_hop_timeout(cfg, i);
 		for (int j = i; j < i + cfg->nprobes && j < cfg->probe_id; ++j)
