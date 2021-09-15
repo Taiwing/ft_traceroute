@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 18:02:52 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 19:27:54 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,8 @@ typedef struct			s_probe
 
 # define	CONFIG_DEF			{\
 	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0,\
-	0, 0, 0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0\
+	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0,\
+	0, 0, 0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
 }
 
 // select timeout in microseconds (is equal to 505ms)
@@ -154,6 +154,7 @@ typedef struct			s_probe
 ** reached: boolean set to true when destination is reached
 ** unreachable: boolean set to true when destination is unreachable
 ** hop: last completed hop
+** last_pending_hop: last hop where probes have been sent
 ** probe_id: id of the next probe to send (also total count of sent probes)
 ** hop_first_id: hop * nprobes is the id of the current hop's first probe
 ** pending_probes: number of probes sent and waiting for a response
@@ -163,6 +164,7 @@ typedef struct			s_probe
 ** here: multiplicative factor for adaptative timeout on same hop
 ** near: multiplicative factor for adaptative timeout on next hop
 ** max_timeout: maximum timeout value for probe in ms (max * 1000.0)
+** hop_timeout: timeout for each hop
 */
 typedef struct			s_trcrt_config
 {
@@ -181,6 +183,7 @@ typedef struct			s_trcrt_config
 	int					reached;
 	int					unreachable;
 	int					hop;
+	int					last_pending_hop;
 	int					probe_id;
 	int					hop_first_id;
 	int					pending_probes;
@@ -190,6 +193,7 @@ typedef struct			s_trcrt_config
 	double				here;
 	double				near;
 	double				max_timeout;
+	double				hop_timeout[MAX_TTL_MAX + 1];
 }						t_trcrt_config;
 
 /*

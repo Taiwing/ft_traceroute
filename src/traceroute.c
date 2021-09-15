@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 14:25:17 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 19:28:00 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static char	*send_probes(t_trcrt_config *cfg)
 		++cfg->probe_id;
 		++cfg->pending_probes;
 	}
+	cfg->last_pending_hop = ((cfg->probe_id - 1) / cfg->nprobes) + 1;
 	return (err);
 }
 
@@ -55,6 +56,8 @@ void		traceroute(t_trcrt_config *cfg)
 
 	cfg->max_probes = cfg->max_ttl * cfg->nprobes;
 	cfg->max_timeout = cfg->max * 1000.0;
+	for (int i = 0; i <= cfg->max_ttl; ++i)
+		cfg->hop_timeout[i] = cfg->max_timeout;
 	while (!err && !cfg->reached && !cfg->unreachable
 		&& (cfg->pending_probes || cfg->probe_id < cfg->max_probes))
 	{
