@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 19:27:54 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 21:51:01 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef struct	s_udphdr
 ** Probe macros
 */
 
-# define	PROBE_SIZE			1024
+# define	PROBE_SIZE			60
 # define	PROBE_UDP_LEN		(PROBE_SIZE - sizeof(struct ip))
 # define	PROBE_UDP_DATA_LEN	(PROBE_UDP_LEN - sizeof(t_udphdr))
 # define	RESP_HEADERS		(sizeof(struct ip) + sizeof(struct icmphdr)\

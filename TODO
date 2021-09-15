@@ -1,3 +1,1 @@
 - test the hell out of the options
-- oh and do not forget to reset probe size to default 60 bytes, not 1024 bytes
-  (maybe handle size like the original, with a command line argument)
