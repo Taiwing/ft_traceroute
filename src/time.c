@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 13:48:54 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 20:52:39 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 21:10:10 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static double	get_hop_timeout(t_trcrt_config *cfg, int i)
 
 char	*check_pending_probes(t_trcrt_config *cfg)
 {
-	int				first_probe;
+	int				fp;
 	char			*err = NULL;
 	struct timeval	now = { 0 };
 	double			timeout = cfg->max_timeout, near = cfg->max_timeout;
@@ -76,14 +76,14 @@ char	*check_pending_probes(t_trcrt_config *cfg)
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
 	for (int i = cfg->last_pending_hop - 1; i >= cfg->hop; --i)
 	{
-		first_probe = i * cfg->nprobes;
+		fp = i * cfg->nprobes;
 		if (cfg->hop_timeout[i] == cfg->max_timeout && cfg->here)
-			cfg->hop_timeout[i] = get_hop_timeout(cfg, first_probe);
-		if (cfg->hop_timeout[i] == cfg->max_timeout && cfg->near)
-			near = timeout * cfg->near;
+			cfg->hop_timeout[i] = get_hop_timeout(cfg, fp);
+		if (cfg->hop_timeout[i] != cfg->max_timeout && cfg->near)
+			near = cfg->hop_timeout[i] * cfg->near < cfg->max_timeout ?
+				cfg->hop_timeout[i] * cfg->near : near;
 		timeout = near < cfg->hop_timeout[i] ? near : cfg->hop_timeout[i];
-		for (int j = first_probe; j < first_probe + cfg->nprobes
-			&& j < cfg->probe_id; ++j)
+		for (int j = fp; j < fp + cfg->nprobes && j < cfg->probe_id; ++j)
 			if (!cfg->probes[j].status
 				&& ts_msdiff(&now, &cfg->probes[j].sent_ts) >= timeout)
 			{
