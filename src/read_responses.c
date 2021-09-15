@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 20:20:06 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 20:47:40 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ char		*read_responses(t_trcrt_config *cfg)
 	fd_set			rfds;
 	char			*err = NULL;
 	int				sret = 0, id;
-	struct timeval	before = { 0 }, after = { 0 }, to = { 0 };
+	struct timeval	before = { 0 }, after = { 0 }, to = { 0, SLCT_TMOUT };
 
 	FD_ZERO(&rfds);
 	FD_SET(cfg->recv_socket, &rfds);
