@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 20:27:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 19:46:02 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 21:54:57 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ static void	print_response(t_trcrt_config *cfg, int i)
 		ipstr = inet_ntoa(cfg->probes[i].received_ip);
 		if (!(fqdn = get_fqdn(buf, NI_MAXHOST, &cfg->probes[i].received_ip)))
 			fqdn = ipstr;
-		ft_printf("%s%s (%s)  %g ms",
+		ft_printf("%s%s (%s)  %.3f ms",
 			i == cfg->hop_first_id ? "" : " ", fqdn, ipstr, time);
 	}
 	else
-		ft_printf("%s%g ms", i == cfg->hop_first_id ? "" : "  ", time);
+		ft_printf("%s%.3f ms", i == cfg->hop_first_id ? "" : "  ", time);
 }
 
 int			print_hop(t_trcrt_config *cfg)
