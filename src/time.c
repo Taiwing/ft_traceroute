@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 13:48:54 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 21:10:10 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 22:31:19 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ double	ts_msdiff(struct timeval *a, struct timeval *b)
 	double s;
 	double us;
 
-	s = ((double)a->tv_sec - (double)b->tv_sec) * 1000.0;
-	us = ((double)a->tv_usec - (double)b->tv_usec) / 1000.0;
+	s = ((double)(a->tv_sec - b->tv_sec)) * 1000.0;
+	us = ((double)(a->tv_usec - b->tv_usec)) / 1000.0;
 	return (s + us);
 }
 

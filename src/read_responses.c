@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 20:47:40 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 22:39:55 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,11 @@ char		*read_responses(t_trcrt_config *cfg)
 	fd_set			rfds;
 	char			*err = NULL;
 	int				sret = 0, id;
-	struct timeval	before = { 0 }, after = { 0 }, to = { 0, SLCT_TMOUT };
+	struct timeval	after = { 0 }, to = { 0, SLCT_TMOUT };
 
 	FD_ZERO(&rfds);
 	FD_SET(cfg->recv_socket, &rfds);
-	if (!err && gettimeofday(&before, NULL) < 0)
-		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-	while (!err
+	while (!err && cfg->pending_probes
 		&& (sret = select(cfg->recv_socket + 1, &rfds, NULL, NULL, &to)) > 0)
 	{
 		if ((id = read_response(cfg, &err)) >= 0
