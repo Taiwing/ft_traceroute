@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 13:48:54 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 19:50:04 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 20:52:39 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,16 @@ int		ts_diff(struct timeval *res, struct timeval *a, struct timeval *b)
 
 static double	get_hop_timeout(t_trcrt_config *cfg, int i)
 {
+	double	here = cfg->max_timeout;
+
 	for (int j = i; j < i + cfg->nprobes && j < cfg->probe_id; ++j)
 		if (cfg->probes[j].status && cfg->probes[j].status < E_PRSTAT_TIMEOUT) 
-			return (ts_msdiff(&cfg->probes[j].received_ts,
-				&cfg->probes[j].sent_ts) * cfg->here);
-	return (cfg->max_timeout);
+		{
+			here = ts_msdiff(&cfg->probes[j].received_ts,
+				&cfg->probes[j].sent_ts) * cfg->here;
+			break ;
+		}
+	return (here < cfg->max_timeout ? here : cfg->max_timeout);
 }
 
 char	*check_pending_probes(t_trcrt_config *cfg)
@@ -86,9 +91,5 @@ char	*check_pending_probes(t_trcrt_config *cfg)
 				--cfg->pending_probes;
 			}
 	}
-	// TODO: if max_timeout is reached, break main for loop and set all
-	// preceding pending probes to E_PRSTAT_TIMEOUT (because they have
-	// been sent before which means they are even older and they too have
-	// reached or passed max_timeout)
 	return (err);
 }
