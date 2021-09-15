@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/14 14:39:53 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/15 20:20:06 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,21 +39,19 @@ static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
 	return (-1);
 }
 
-static char	*read_response(t_trcrt_config *cfg, struct timeval *ts)
+static int	read_response(t_trcrt_config *cfg, char **err)
 {
 	int					rd, id;
-	char				*err = NULL;
 	t_icmp_packet		resp = { 0 };
 	struct sockaddr_in	respip = { 0 };
 	socklen_t			len = sizeof(respip);
 
 	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp, sizeof(resp), 0,
 		(struct sockaddr *)&respip, &len)) < 0)
-		ft_asprintf(&err, "recvfrom: %s", strerror(errno));
-	if (err || rd < (int)RESP_HEADERS
+		ft_asprintf(err, "recvfrom: %s", strerror(errno));
+	if (*err || rd < (int)RESP_HEADERS
 		|| (id = check_resp(cfg, &resp, &respip)) < 0)
-		return (err);
-	ft_memcpy((void *)&cfg->probes[id].received_ts, (void *)ts, sizeof(*ts));
+		return (-1);
 	ft_memcpy((void *)&cfg->probes[id].received_ip, (void *)&respip.sin_addr,
 		sizeof(struct in_addr));
 	if (resp.icmp.type == ICMP_TIME_EXCEEDED)
@@ -65,29 +63,29 @@ static char	*read_response(t_trcrt_config *cfg, struct timeval *ts)
 	else
 		cfg->probes[id].status = E_PRSTAT_UNREACH_NET + resp.icmp.code - 1;
 	--cfg->pending_probes;
-	return (err);
+	return (id);
 }
 
 char		*read_responses(t_trcrt_config *cfg)
 {
 	fd_set			rfds;
-	int				sret = 0;
 	char			*err = NULL;
+	int				sret = 0, id;
 	struct timeval	before = { 0 }, after = { 0 }, to = { 0 };
 
 	FD_ZERO(&rfds);
 	FD_SET(cfg->recv_socket, &rfds);
 	if (!err && gettimeofday(&before, NULL) < 0)
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-	while (!err && !to.tv_sec && to.tv_usec < SLCT_TMOUT
+	while (!err
 		&& (sret = select(cfg->recv_socket + 1, &rfds, NULL, NULL, &to)) > 0)
 	{
-		if (!err && gettimeofday(&after, NULL) < 0)
+		if ((id = read_response(cfg, &err)) >= 0
+			&& gettimeofday(&after, NULL) < 0)
 			ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-		else
-			ts_diff(&to, &after, &before);
-		if (!err)
-			err = read_response(cfg, &after);
+		else if (!err && id >= 0)
+			ft_memcpy((void *)&cfg->probes[id].received_ts,
+				(void *)&after, sizeof(struct timeval));
 		FD_ZERO(&rfds);
 		FD_SET(cfg->recv_socket, &rfds);
 	}
