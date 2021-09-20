@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 21:51:01 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/20 14:10:38 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "libft.h"
 # include <limits.h>
+# include <float.h>
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netdb.h>
