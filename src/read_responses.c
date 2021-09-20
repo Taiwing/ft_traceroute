@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 22:39:55 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:26:59 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
 	seqid = cfg->ident <= (int)seq ? (int)seq - cfg->ident
 		: 0xffff - cfg->ident + (int)seq;
 	if ((id != seqid && resp->icmp.type != ICMP_DEST_UNREACH)
-		|| id >= PROBES_MAX || cfg->probes[id].status)
+		|| id >= cfg->probe_id || id >= PROBES_MAX || cfg->probes[id].status)
 		return (-1);
 	else if (resp->icmp.type == ICMP_TIME_EXCEEDED)
 		return (resp->icmp.code == ICMP_EXC_TTL ? id : -1);
