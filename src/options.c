@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 18:03:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/20 14:12:11 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/20 14:43:14 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ char		*get_options(t_trcrt_config *cfg, int argc, char **argv)
 		{
 			case 'm': intopt(&cfg->max_ttl, &optd, 1, MAX_TTL_MAX);		break;
 			case 'N': intopt(&cfg->sprobes, &optd, 1, SPROBES_MAX);		break;
-			case 'p': intopt(&cfg->port, &optd, 0, USHRT_MAX);			break;
+			case 'p': intopt(&cfg->port, &optd, 1, USHRT_MAX);			break;
 			case 'q': intopt(&cfg->nprobes, &optd, 1, NPROBES_MAX);		break;
 			case 'w': set_wait_times(cfg, optd.optarg);					break;
 			default:

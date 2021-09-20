@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 19:28:00 by yforeau          ###   ########.fr       */
+/*   Updated: 2021/09/20 14:46:05 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static char	*send_probe(t_trcrt_config *cfg)
 	int			ttl = (cfg->probe_id / cfg->nprobes) + 1;
 
 	port = (cfg->port + cfg->probe_id) % 0xffff;
+	if (cfg->port > port)
+		++port;
 	seq = (cfg->ident + cfg->probe_id) % 0xffff;
 	ft_memcpy((void *)cfg->probe_data, (void *)&seq, sizeof(uint16_t));
 	if (setsockopt(cfg->send_socket, SOL_IP, IP_TTL,
