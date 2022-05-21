@@ -20,6 +20,9 @@ cd ft_traceroute/ && make
 sudo ./ft_traceroute example.com
 ```
 
+As shown above this program needs sudo rights. This is because ft\_traceroute
+uses raw sockets to read ICMP responses.
+
 ## Usage
 
 ft\_traceroute sends UDP probe packets by batches starting with a ttl of 1 and
@@ -52,4 +55,11 @@ Options:
 				received response from the same hop and sets it as a new
 				timeout value (if less than max). 'near' is the same as
 				'here' except that it will look at the next hop (def: 10.0).
+```
+
+#### example:
+
+```shell
+# traceroute google.com
+sudo ./ft_traceroute google.com
 ```
