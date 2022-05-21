@@ -57,6 +57,8 @@ Options:
 				'here' except that it will look at the next hop (def: 10.0).
 ```
 
+> This program only handles valid local or remote hostnames and IPv4.
+
 #### example:
 
 ```shell
