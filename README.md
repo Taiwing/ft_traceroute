@@ -6,7 +6,7 @@ a packet can go through. This is useful for network diagnostics.
 
 <br />
 <p align="center">
-	<img src="https://github.com/Taiwing/ft_traceroute/blob/master/resources/router.jpg?raw=true" alt="router" style="width: 50%;"/>
+	<img src="https://github.com/Taiwing/ft_traceroute/blob/main/resources/router.jpg?raw=true" alt="router" style="width: 50%;"/>
 </p>
 
 ## Setup
