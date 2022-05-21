@@ -22,11 +22,11 @@ sudo ./ft_traceroute example.com
 
 ## Usage
 
-ft\_traceroute sends ECHO\_REQUEST packets by batches starting with a ttl of 1
-and incrementing it for each batch. At each intermediary hop between the source
-computer and the remote host the ECHO\_REQUEST will trigger an ICMP error
-response because of the expired TTL. This is how ft\_traceroute gathers the
-addresses and network stats of routing nodes before the target host.
+ft\_traceroute sends UDP probe packets by batches starting with a ttl of 1 and
+incrementing it for each batch. At each intermediary hop between the source
+computer and the remote host the probe will trigger an ICMP error response
+because of the expired TTL. This is how ft\_traceroute gathers the addresses
+and network stats of routing nodes before the target host.
 
 ```
 Usage:
