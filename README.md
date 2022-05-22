@@ -35,12 +35,6 @@ repository:
 
 ## Usage
 
-ft\_traceroute sends UDP probe packets by batches starting with a ttl of 1 and
-incrementing it for each batch. At each intermediary hop between the source
-computer and the remote host the probe will trigger an ICMP error response
-because of the expired TTL. This is how ft\_traceroute gathers the addresses
-and network stats of routing nodes before the target host.
-
 ```
 Usage:
 	ft_traceroute [options] <destination>
@@ -75,3 +69,42 @@ Options:
 # traceroute google.com
 sudo ./ft_traceroute google.com
 ```
+
+possible output:
+
+```
+traceroute to google.com (216.58.213.14), 30 hops max, 60 byte packets
+ 1  77-240-12-190.rdns.nuttyabouthosting.co.uk (77.240.12.190)  1.069 ms  1.113 ms  1.354 ms
+ 2  1001.te3-1.core2.dc7.as20860.net (77.240.7.139)  8.751 ms  8.952 ms  8.948 ms
+ 3  * * *
+ 4  be2.asr01.dc7.as20860.net (130.180.202.2)  9.045 ms  11.011 ms  11.407 ms
+ 5  * * *
+ 6  * * *
+ 7  108.170.244.193 (108.170.246.161)  7.285 ms 108.170.225.172 (108.170.225.172)  7.573 ms  7.871 ms
+ 8  142.250.224.199 (172.253.65.211)  8.164 ms  8.483 ms  9.070 ms
+ 9  lhr25s25-in-f14.1e100.net (216.58.213.14)  8.442 ms  9.370 ms  9.590 ms
+ ```
+
+## How it works
+
+ft\_traceroute crafts UDP probe packets (User Datagram Protocol) filled with
+random data. UDP is a layer 4 protocol, so it is a transport protocol like TCP.
+Its goal is to deliver a data payload to given target. However, this is not
+really important in an ft\_traceroute implementation. Everything needed for the
+traceroute functions is provided by the IP header.
+
+The main trick for getting the intermediary hops list to the given target is to
+use the TTL field of the probes' IP header. The Time To Live field sets a limit
+for the number of hops a packet can pass through (that's why it has been renamed
+to 'hop\_limit' in the IPv6 protocol). Since the TTL field is decremented at
+each hop it will inevitably reach 0 if the host is not found. This avoids having
+packets wandering around the internet forever with no valid destination. When it
+does reach 0 the router is supposed to return an ICMP error packet of the type
+'Time Exceeded' back to the sender.
+
+So ft\_traceroute sends its first probe with a TTL of one for the packet to
+expire on the first hop it goes through. Then, through the IP header of the ICMP
+response, it has access to the router's address. After that the TTL of the UDP
+probe is incremented by one to reach the next hop. This repeats until the target
+host is found or the max\_ttl limit is reached (which can be set with the -m
+option).
