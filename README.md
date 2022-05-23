@@ -112,8 +112,8 @@ probe is incremented by one to reach the next hop. This repeats until the target
 host is found or the max\_ttl limit is reached (which can be set with the -m
 option).
 
-Also, ft\_traceroute sends multiple probes (nprobes as set with the -q option)
-per hop. This is both because UDP can be unreliable in certain conditions, as it
+Also, ft\_traceroute sends multiple probes per hop (nprobes as set with the -q
+option). This is both because UDP can be unreliable in certain conditions, as it
 does not natively provide any control mechanism on the reception of the packet,
 and because network conditions can change the path of a probe. So a hop can have
 multiple addresses when the route taken changes (as the in the example above for
