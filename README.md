@@ -112,6 +112,29 @@ probe is incremented by one to reach the next hop. This repeats until the target
 host is found or the max\_ttl limit is reached (which can be set with the -m
 option).
 
+#### UDP probe example:
+
+IP header:
+
+| version | total length | time to live | protocol | source ip | destination ip |
+|---------|--------------|--------------|----------|-----------|----------------|
+| 4       | 60           | 1            | UDP      | 1.2.3.4   | 216.58.213.14  |
+
+> Some fields have been removed for clarity. For a complete overview of the IPv4
+> protocol check [this page](https://en.wikipedia.org/wiki/IPv4).
+
+UDP header:
+
+| source port | destination port | length | checksum |
+|-------------|------------------|--------|----------|
+| 1234        | 33434            | 40     | 0xffff   |
+
+The IP header is 20 bytes long, UDP is 8 bytes and there is 32 bytes of data,
+which is why the total length IP field amounts to 60 bytes. The UDP length is 40
+because it takes into account its own length as well as the data it carries. The
+destination port of the UDP header does not matter much as long as it is not a
+used or filtered port which is very unlikely for intermediary hops anyway.
+
 Also, ft\_traceroute sends multiple probes per hop (nprobes as set with the -q
 option). This is both because UDP can be unreliable in certain conditions, as it
 does not natively provide any control mechanism on the reception of the packet,
