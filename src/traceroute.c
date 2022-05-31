@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/20 14:46:05 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/05/31 17:27:57 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ static char	*send_probe(t_trcrt_config *cfg)
 		ft_asprintf(&err, "setsockopt: %s", strerror(errno));
 	if (!err && gettimeofday(&cfg->probes[cfg->probe_id].sent_ts, NULL) < 0)
 		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
+	cfg->srcip.sin_port = htons((port + 1) % 0xffff);
+	bind(cfg->send_socket, (struct sockaddr *)&cfg->srcip, sizeof(struct sockaddr_in));
 	cfg->destip.sin_port = htons(port);
 	if (!err && sendto(cfg->send_socket, (void *)cfg->probe_data,
 		sizeof(cfg->probe_data), 0, (struct sockaddr *)&cfg->destip,

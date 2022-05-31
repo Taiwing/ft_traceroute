@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/05/31 15:17:49 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/05/31 17:32:39 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,11 +109,17 @@ typedef struct			s_probe
 # define	MAX_DEF				5.0
 # define	HERE_DEF			3.0
 # define	NEAR_DEF			10.0
+# define	SRCIP_DEF			{\
+	.sin_family = AF_INET,\
+	.sin_addr = { .s_addr = htonl(INADDR_ANY) },\
+	.sin_port = 0,\
+}
 
 # define	CONFIG_DEF			{\
-	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0,\
-	0, 0, 0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
+	ft_exec_name(*argv), NULL, SRCIP_DEF, { 0 }, { 0 }, MAX_TTL_DEF,\
+	SPROBES_DEF, NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0,\
+	0, 0, 0, 0, 0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0,\
+	{ 0.0 }\
 }
 
 // select timeout in microseconds (is equal to 505ms)
@@ -142,6 +148,7 @@ typedef struct			s_probe
 **
 ** exec: executable name
 ** dest: destination argument
+** srcip: source ip for setting source port on outgoing UDP probes
 ** destip: destination ip from getaddrinfo
 ** destip_str: destination ip string from inet_ntop
 ** max_ttl: max number of hops
@@ -171,6 +178,7 @@ typedef struct			s_trcrt_config
 {
 	const char			*exec;
 	const char			*dest;
+	struct sockaddr_in	srcip;
 	struct sockaddr_in	destip;
 	char				destip_str[INET_ADDRSTRLEN + 1];
 	int					max_ttl;
