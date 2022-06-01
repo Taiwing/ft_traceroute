@@ -46,7 +46,7 @@ Options:
 
 	-m max_ttl		Set max number of hops and TTL value (def: 30).
 
-	-N sprobes		Number of probe packets sent out simultaneously (def: 16).
+	-N sprobes		Number of probe packets sent out simultaneously (def: 1).
 
 	-p port			Destination port base for UDP probes (def: 33434).
 
