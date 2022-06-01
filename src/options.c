@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 18:03:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/20 14:43:14 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/01 17:22:10 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,22 +77,21 @@ static void	set_wait_times(t_trcrt_config *cfg, char *arg)
 	else if (!err)
 		err = floatopt(&cfg->near, start, end - start);
 	if (err)
-		ft_exit(err, EXIT_FAILURE);
+		ft_exit(EXIT_FAILURE, err);
 }
 
 static void	intopt(int *dest, t_optdata *optd, int min, int max)
 {
-	int		ret;
 	char	*err;
 
-	if ((ret = ft_secatoi(dest, min, max, optd->optarg)))
+	if (ft_secatoi(dest, min, max, optd->optarg) < 0)
 	{
-		if (ret == FT_E_NOT_A_NUMBER)
+		if (ft_errno == E_FTERR_NOT_A_NUMBER)
 			ft_asprintf(&err, "invalid argument: '%s'", optd->optarg);
 		else
 			ft_asprintf(&err, "invalid argument: '%s': "
 				"out of range: %d <= value <= %d", optd->optarg, min, max);
-		ft_exit(err, EXIT_FAILURE);
+		ft_exit(EXIT_FAILURE, err);
 	}
 }
 
@@ -118,7 +117,7 @@ char		*get_options(t_trcrt_config *cfg, int argc, char **argv)
 				ft_printf(FT_TRACEROUTE_HELP, cfg->exec, MAX_TTL_DEF,
 					SPROBES_DEF, PORT_DEF, NPROBES_DEF, MAX_DEF, HERE_DEF,
 					NEAR_DEF);
-				ft_exit(NULL, opt != 'h');
+				ft_exit(opt != 'h', NULL);
 		}
 	ft_memdel((void **)&args);
 	return (argv[optd.optind]);

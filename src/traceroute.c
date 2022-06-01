@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/20 14:46:05 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/01 17:24:03 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,5 @@ void		traceroute(t_trcrt_config *cfg)
 				cfg->hop_first_id += cfg->nprobes;
 	}
 	if (err)
-		ft_exit(err, EXIT_FAILURE);
+		ft_exit(EXIT_FAILURE, err);
 }
