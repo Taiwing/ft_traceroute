@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/01 14:46:35 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 21:47:25 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,6 @@ typedef struct			s_probe
 # define	HERE_DEF			3.0
 # define	NEAR_DEF			10.0
 
-# define	CONFIG_DEF			{\
-	ft_exec_name(*argv), NULL, { 0 }, { 0 }, MAX_TTL_DEF, SPROBES_DEF,\
-	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0,\
-	0, 0, 0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
-}
-
 // select timeout in microseconds (is equal to 505ms)
 # define	SLCT_TMOUT		505000
 // package response in seconds
@@ -142,8 +136,7 @@ typedef struct			s_probe
 **
 ** exec: executable name
 ** dest: destination argument
-** destip: destination ip from getaddrinfo
-** destip_str: destination ip string from inet_ntop
+** destip: destination ip
 ** max_ttl: max number of hops
 ** sprobes: number of probe packets to send simultaneously
 ** nprobes: number of probe packets per hop
@@ -171,8 +164,7 @@ typedef struct			s_trcrt_config
 {
 	const char			*exec;
 	const char			*dest;
-	struct sockaddr_in	destip;
-	char				destip_str[INET_ADDRSTRLEN + 1];
+	t_ip				destip;
 	int					max_ttl;
 	int					sprobes;
 	int					nprobes;
@@ -196,6 +188,12 @@ typedef struct			s_trcrt_config
 	double				max_timeout;
 	double				hop_timeout[MAX_TTL_MAX + 1];
 }						t_trcrt_config;
+
+# define	CONFIG_DEF			{\
+	ft_exec_name(*argv), NULL, { 0 }, MAX_TTL_DEF, SPROBES_DEF, NPROBES_DEF,\
+	PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
+	{{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
+}
 
 /*
 ** ft_traceroute functions

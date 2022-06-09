@@ -6,50 +6,42 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/01 17:24:03 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 22:06:15 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
-static char	*send_probe(t_trcrt_config *cfg)
+static void	send_probe(t_trcrt_config *cfg)
 {
-	char		*err = NULL;
-	uint16_t	port, seq;
+	uint16_t	port;
 	int			ttl = (cfg->probe_id / cfg->nprobes) + 1;
 
 	port = (cfg->port + cfg->probe_id) % 0xffff;
 	if (cfg->port > port)
 		++port;
-	seq = (cfg->ident + cfg->probe_id) % 0xffff;
-	ft_memcpy((void *)cfg->probe_data, (void *)&seq, sizeof(uint16_t));
 	if (setsockopt(cfg->send_socket, SOL_IP, IP_TTL,
 		(void *)&ttl, sizeof(int)) < 0)
-		ft_asprintf(&err, "setsockopt: %s", strerror(errno));
-	if (!err && gettimeofday(&cfg->probes[cfg->probe_id].sent_ts, NULL) < 0)
-		ft_asprintf(&err, "gettimeofday: %s", strerror(errno));
-	cfg->destip.sin_port = htons(port);
-	if (!err && sendto(cfg->send_socket, (void *)cfg->probe_data,
+		ft_exit(EXIT_FAILURE, "setsockopt: %s", strerror(errno));
+	ft_ip_set_port(&cfg->destip, htons(port));
+	if (gettimeofday(&cfg->probes[cfg->probe_id].sent_ts, NULL) < 0)
+		ft_exit(EXIT_FAILURE, "gettimeofday: %s", strerror(errno));
+	if (sendto(cfg->send_socket, (void *)cfg->probe_data,
 		sizeof(cfg->probe_data), 0, (struct sockaddr *)&cfg->destip,
-		sizeof(struct sockaddr_in)) < 0)
-		ft_asprintf(&err, "sendto: %s", strerror(errno));
-	return (err);
+		ft_ip_sock_size(&cfg->destip)) < 0)
+		ft_exit(EXIT_FAILURE, "sendto: %s", strerror(errno));
 }
 
-static char	*send_probes(t_trcrt_config *cfg)
+static void	send_probes(t_trcrt_config *cfg)
 {
-	char	*err = NULL;
-
-	while (!err && cfg->pending_probes < cfg->sprobes
+	while (cfg->pending_probes < cfg->sprobes
 		&& cfg->probe_id < cfg->max_probes)
 	{
-		if ((err = send_probe(cfg)))
-			break ;
+		send_probe(cfg);
 		++cfg->probe_id;
 		++cfg->pending_probes;
 	}
 	cfg->last_pending_hop = ((cfg->probe_id - 1) / cfg->nprobes) + 1;
-	return (err);
 }
 
 void		traceroute(t_trcrt_config *cfg)
@@ -66,7 +58,7 @@ void		traceroute(t_trcrt_config *cfg)
 		//send as many probes as possible
 		if (cfg->pending_probes < cfg->sprobes
 			&& cfg->probe_id < cfg->max_probes)
-			err = send_probes(cfg);
+			send_probes(cfg);
 		//read responses if any
 		if (!err)
 			err = read_responses(cfg);

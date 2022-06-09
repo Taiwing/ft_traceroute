@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/20 14:47:20 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 21:40:24 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,20 @@
 static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
 	struct sockaddr_in *respip)
 {
-	int			id, seqid;
-	uint16_t	seq, port;
+	int			id;
+	uint16_t	port;
 
-	ft_memcpy((void *)&seq, (void *)resp->data, sizeof(uint16_t));
 	port = ntohs(resp->data_udp.dstp);
 	id = cfg->port <= (int)port ? (int)port - cfg->port
 		: 0xffff - cfg->port + (int)port - 1;
-	seqid = cfg->ident <= (int)seq ? (int)seq - cfg->ident
-		: 0xffff - cfg->ident + (int)seq;
-	if ((id != seqid && resp->icmp.type != ICMP_DEST_UNREACH)
-		|| id >= cfg->probe_id || id >= PROBES_MAX || cfg->probes[id].status)
+	if (id >= cfg->probe_id || id >= PROBES_MAX || cfg->probes[id].status)
 		return (-1);
 	else if (resp->icmp.type == ICMP_TIME_EXCEEDED)
 		return (resp->icmp.code == ICMP_EXC_TTL ? id : -1);
 	else if (resp->icmp.type == ICMP_DEST_UNREACH)
 	{
 		if (resp->icmp.code == ICMP_PORT_UNREACH
-			&& respip->sin_addr.s_addr != cfg->destip.sin_addr.s_addr)
+			&& respip->sin_addr.s_addr != cfg->destip.v4.sin_addr.s_addr)
 			return (-1);
 		return (resp->icmp.code <= ICMP_SR_FAILED ? id : -1);
 	}
