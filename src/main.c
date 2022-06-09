@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 22:11:52 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 22:27:39 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ int			main(int argc, char **argv)
 	else if ((cfg.recv_socket = socket(cfg.domain, SOCK_RAW, IPPROTO_ICMP)) < 0)
 		ft_exit(EXIT_FAILURE, "recv_socket: socket: %s", strerror(errno));
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
-		cfg.dest, ft_ip_str(&cfg.destip), cfg.max_ttl, PROBE_SIZE);
-	for (int i = 0; i < (int)PROBE_UDP_DATA_LEN; ++i )
+		cfg.dest, ft_ip_str(&cfg.destip), cfg.max_ttl, PROBE_SIZE(cfg.domain));
+	for (int i = 0; i < (int)PROBE_UDP_DATA_LEN(cfg.domain); ++i )
 		cfg.probe_data[i] = (i % 0x40) + 0x40;
 	traceroute(&cfg);
 	ft_exit(EXIT_SUCCESS, NULL);

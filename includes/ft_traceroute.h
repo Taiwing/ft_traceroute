@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 22:12:45 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 22:32:04 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,11 @@ typedef struct	s_udphdr
 ** Probe macros
 */
 
-# define	PROBE_SIZE			60
-# define	PROBE_UDP_LEN		(PROBE_SIZE - sizeof(struct ip))
-# define	PROBE_UDP_DATA_LEN	(PROBE_UDP_LEN - sizeof(t_udphdr))
-# define	RESP_HEADERS		(sizeof(struct ip) + sizeof(struct icmphdr)\
-		+ sizeof(struct ip) + sizeof(t_udphdr))
-# define	RESP_HEADERS_SEQ	(RESP_HEADERS + sizeof(uint16_t))
+# define	PROBE_SIZE(domain)			(domain == AF_INET ? 60 : 24)
+# define	PROBE_UDP_DATA_LEN(domain)	(domain == AF_INET ? 32 : 24)
+# define	RESP_HEADERS(domain)		(\
+		(domain == AF_INET ? sizeof(struct ip) : sizeof(struct ipv6hdr)) * 2\
+		+ sizeof(struct icmphdr) + sizeof(t_udphdr))
 
 /*
 ** t_icmp_packet: icmp packet structure
@@ -65,7 +64,7 @@ typedef struct		s_icmp_packet
 	struct icmphdr	icmp;
 	struct ip		data_ip;
 	t_udphdr		data_udp;
-	char			data[PROBE_UDP_DATA_LEN];
+	char			data[PROBE_UDP_DATA_LEN(AF_INET)];
 }					t_icmp_packet;
 
 /*
@@ -183,7 +182,7 @@ typedef struct			s_trcrt_config
 	int					hop_first_id;
 	int					pending_probes;
 	t_probe				probes[PROBES_MAX];
-	char				probe_data[PROBE_UDP_DATA_LEN];
+	char				probe_data[PROBE_UDP_DATA_LEN(AF_INET)];
 	double				max;
 	double				here;
 	double				near;

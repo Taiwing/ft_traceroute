@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 21:40:24 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 22:28:01 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	read_response(t_trcrt_config *cfg, char **err)
 	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp, sizeof(resp), 0,
 		(struct sockaddr *)&respip, &len)) < 0)
 		ft_asprintf(err, "recvfrom: %s", strerror(errno));
-	if (*err || rd < (int)RESP_HEADERS
+	if (*err || rd < (int)RESP_HEADERS(cfg->domain)
 		|| (id = check_resp(cfg, &resp, &respip)) < 0)
 		return (-1);
 	ft_memcpy((void *)&cfg->probes[id].received_ip, (void *)&respip.sin_addr,
