@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 21:47:25 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 22:12:45 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ typedef struct			s_probe
 ** exec: executable name
 ** dest: destination argument
 ** destip: destination ip
+** domain: AF_INET or AF_INET6
 ** max_ttl: max number of hops
 ** sprobes: number of probe packets to send simultaneously
 ** nprobes: number of probe packets per hop
@@ -165,6 +166,7 @@ typedef struct			s_trcrt_config
 	const char			*exec;
 	const char			*dest;
 	t_ip				destip;
+	int					domain;
 	int					max_ttl;
 	int					sprobes;
 	int					nprobes;
@@ -190,7 +192,7 @@ typedef struct			s_trcrt_config
 }						t_trcrt_config;
 
 # define	CONFIG_DEF			{\
-	ft_exec_name(*argv), NULL, { 0 }, MAX_TTL_DEF, SPROBES_DEF, NPROBES_DEF,\
+	ft_exec_name(*argv), NULL, { 0 }, 0, MAX_TTL_DEF, SPROBES_DEF, NPROBES_DEF,\
 	PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
 	{{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
 }

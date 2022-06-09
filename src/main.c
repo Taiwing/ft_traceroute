@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 21:56:06 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/09 22:11:52 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	cleanup(t_trcrt_config *cfg)
 
 int			main(int argc, char **argv)
 {
-	int				ret, domain;
+	int				ret;
 	t_trcrt_config	cfg = CONFIG_DEF;
 	void			cleanup_handler(void) { cleanup(&cfg); };
 
@@ -33,10 +33,10 @@ int			main(int argc, char **argv)
 		ft_exit(EXIT_FAILURE, "user is not root");
 	else if ((ret = ft_get_ip(&cfg.destip, cfg.dest, AF_INET)))
 		ft_exit(EXIT_FAILURE, "%s: %s", cfg.dest, gai_strerror(ret));
-	domain = cfg.destip.family;
-	if ((cfg.send_socket = socket(domain, SOCK_DGRAM, IPPROTO_UDP)) < 0)
+	cfg.domain = cfg.destip.family;
+	if ((cfg.send_socket = socket(cfg.domain, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 		ft_exit(EXIT_FAILURE, "send_socket: socket: %s", strerror(errno));
-	else if ((cfg.recv_socket = socket(domain, SOCK_RAW, IPPROTO_ICMP)) < 0)
+	else if ((cfg.recv_socket = socket(cfg.domain, SOCK_RAW, IPPROTO_ICMP)) < 0)
 		ft_exit(EXIT_FAILURE, "recv_socket: socket: %s", strerror(errno));
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
 		cfg.dest, ft_ip_str(&cfg.destip), cfg.max_ttl, PROBE_SIZE);
