@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 22:32:04 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/10 10:07:36 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,9 @@ typedef struct			s_probe
 
 // select timeout in microseconds (is equal to 505ms)
 # define	SLCT_TMOUT		505000
-// package response in seconds
+
+# define	ICMP_PROTO(domain)	(\
+	domain == AF_INET ? IPPROTO_ICMP : IPPROTO_ICMPV6)
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:w:"
 # define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n\n"\
