@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 20:27:02 by yforeau           #+#    #+#             */
-/*   Updated: 2021/09/15 21:54:57 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 21:53:59 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,15 @@
 
 const char	*g_prstat_err[] = { "!N", "!H", "!P", "!F", "!S", NULL };
 
-static char	*get_fqdn(char *buf, size_t size, struct in_addr *ip)
+static char	*get_fqdn(char *buf, size_t size, t_ip *ip)
 {
-	struct sockaddr_in	addr = { AF_INET, 0, { 0 }, { 0 } };
+	t_ip	addr = { 0 };
 
-	ft_memcpy((void *)&addr.sin_addr, (void *)ip, sizeof(struct in_addr));
+	addr.family = ip->family;
+	ft_memcpy((void *)ft_ip_addr(&addr),
+		(void *)ft_ip_addr(ip), ft_ip_size(ip));
 	if (!getnameinfo((struct sockaddr *)&addr,
-		sizeof(addr), buf, size, NULL, 0, 0))
+		ft_ip_sock_size(ip), buf, size, NULL, 0, 0))
 		return (buf);
 	return (NULL);
 }
@@ -38,11 +40,10 @@ static void	print_response(t_trcrt_config *cfg, int i)
 		return ;
 	}
 	time = ts_msdiff(&cfg->probes[i].received_ts, &cfg->probes[i].sent_ts);
-	if (i == cfg->hop_first_id
-		|| cfg->probes[i].received_ip.s_addr
-		!= cfg->probes[i-1].received_ip.s_addr)
+	if (i == cfg->hop_first_id || ft_ip_cmp(&cfg->probes[i].received_ip,
+		&cfg->probes[i-1].received_ip))
 	{
-		ipstr = inet_ntoa(cfg->probes[i].received_ip);
+		ipstr = ft_ip_str(&cfg->probes[i].received_ip);
 		if (!(fqdn = get_fqdn(buf, NI_MAXHOST, &cfg->probes[i].received_ip)))
 			fqdn = ipstr;
 		ft_printf("%s%s (%s)  %.3f ms",

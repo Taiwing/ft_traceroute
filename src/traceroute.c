@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 08:47:53 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 22:06:15 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 22:08:40 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,11 @@ static void	send_probe(t_trcrt_config *cfg)
 	port = (cfg->port + cfg->probe_id) % 0xffff;
 	if (cfg->port > port)
 		++port;
-	if (setsockopt(cfg->send_socket, SOL_IP, IP_TTL,
+	if (cfg->domain == AF_INET && setsockopt(cfg->send_socket, SOL_IP, IP_TTL,
 		(void *)&ttl, sizeof(int)) < 0)
+		ft_exit(EXIT_FAILURE, "setsockopt: %s", strerror(errno));
+	else if (cfg->domain == AF_INET6 && setsockopt(cfg->send_socket, SOL_IPV6,
+		IPV6_UNICAST_HOPS, (void *)&ttl, sizeof(int)) < 0)
 		ft_exit(EXIT_FAILURE, "setsockopt: %s", strerror(errno));
 	ft_ip_set_port(&cfg->destip, htons(port));
 	if (gettimeofday(&cfg->probes[cfg->probe_id].sent_ts, NULL) < 0)

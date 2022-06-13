@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 22:27:39 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 22:00:55 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,13 @@ int			main(int argc, char **argv)
 	cfg.dest = get_options(&cfg, argc, argv);
 	if (getuid())
 		ft_exit(EXIT_FAILURE, "user is not root");
-	else if ((ret = ft_get_ip(&cfg.destip, cfg.dest, AF_INET)))
+	else if ((ret = ft_get_ip(&cfg.destip, cfg.dest, AF_UNSPEC)))
 		ft_exit(EXIT_FAILURE, "%s: %s", cfg.dest, gai_strerror(ret));
 	cfg.domain = cfg.destip.family;
 	if ((cfg.send_socket = socket(cfg.domain, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 		ft_exit(EXIT_FAILURE, "send_socket: socket: %s", strerror(errno));
-	else if ((cfg.recv_socket = socket(cfg.domain, SOCK_RAW, IPPROTO_ICMP)) < 0)
+	else if ((cfg.recv_socket
+		= socket(cfg.domain, SOCK_RAW, ICMP_PROTO(cfg.domain))) < 0)
 		ft_exit(EXIT_FAILURE, "recv_socket: socket: %s", strerror(errno));
 	ft_printf("traceroute to %s (%s), %d hops max, %zu byte packets\n",
 		cfg.dest, ft_ip_str(&cfg.destip), cfg.max_ttl, PROBE_SIZE(cfg.domain));

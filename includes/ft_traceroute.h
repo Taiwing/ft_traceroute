@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/10 10:07:36 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 20:56:44 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,24 +50,6 @@ typedef struct	s_udphdr
 		+ sizeof(struct icmphdr) + sizeof(t_udphdr))
 
 /*
-** t_icmp_packet: icmp packet structure
-**
-** ip: ip header of response
-** icmp: icmp header of response
-** data_ip: ip header of the probe packet
-** data_udp: udp header of the probe packet
-** data: data of the probe packet
-*/
-typedef struct		s_icmp_packet
-{
-	struct ip		ip;
-	struct icmphdr	icmp;
-	struct ip		data_ip;
-	t_udphdr		data_udp;
-	char			data[PROBE_UDP_DATA_LEN(AF_INET)];
-}					t_icmp_packet;
-
-/*
 ** enum e_probe_status: list of every possible states for a probe
 */
 enum e_probe_status	{
@@ -90,7 +72,7 @@ typedef struct			s_probe
 	enum e_probe_status	status;
 	struct timeval		sent_ts;
 	struct timeval		received_ts;
-	struct in_addr		received_ip;
+	t_ip				received_ip;
 }						t_probe;
 
 /*

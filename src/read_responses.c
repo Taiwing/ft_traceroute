@@ -6,58 +6,107 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/09 22:28:01 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 22:14:56 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 
-static int	check_resp(t_trcrt_config *cfg, t_icmp_packet *resp,
-	struct sockaddr_in *respip)
+static int	valid_ipv6_response(t_trcrt_config *cfg, t_packet *resp, t_ip *ip)
+{
+	if (resp->nextip->v6.nexthdr != IPPROTO_UDP)
+		return (0);
+	else if (resp->next->icmp6.icmp6_type == ICMPV6_TIME_EXCEED)
+		return (resp->next->icmp6.icmp6_code == ICMPV6_EXC_HOPLIMIT);
+	else if (resp->next->icmp6.icmp6_type == ICMPV6_DEST_UNREACH)
+	{
+		if (resp->next->icmp6.icmp6_code == ICMPV6_PORT_UNREACH
+			&& ft_ip_cmp(ip, &cfg->destip))
+			return (0);
+		return (1);
+	}
+	return (0);
+}
+
+static int	valid_ipv4_response(t_trcrt_config *cfg, t_packet *resp, t_ip *ip)
+{
+	if (resp->nextip->v4.protocol != IPPROTO_UDP)
+		return (0);
+	else if (resp->next->icmp.type == ICMP_TIME_EXCEEDED)
+		return (resp->next->icmp.code == ICMP_EXC_TTL);
+	else if (resp->next->icmp.type == ICMP_DEST_UNREACH)
+	{
+		if (resp->next->icmp.code == ICMP_PORT_UNREACH
+			&& ft_ip_cmp(ip, &cfg->destip))
+			return (0);
+		return (resp->next->icmp.code <= ICMP_SR_FAILED);
+	}
+	return (0);
+}
+
+//TODO: Agnostifying type and code wont work since the values of the ICMP and
+//ICMP6 errors are not the same. This will require two different functions. One
+//for IPv4 and one for IPv6.
+//TODO: check headers first (we know the ip header is good since the socket will
+//be in the right domain and that the packet is ICMP since it's the protocol we
+//are listening to. But the second IP header and the UDP header need to be
+//checked.
+static int	check_resp(t_trcrt_config *cfg, t_packet *resp, t_ip *respip)
 {
 	int			id;
-	uint16_t	port;
+	uint16_t	port = ntohs(resp->last->udp.dest);
 
-	port = ntohs(resp->data_udp.dstp);
 	id = cfg->port <= (int)port ? (int)port - cfg->port
 		: 0xffff - cfg->port + (int)port - 1;
 	if (id >= cfg->probe_id || id >= PROBES_MAX || cfg->probes[id].status)
 		return (-1);
-	else if (resp->icmp.type == ICMP_TIME_EXCEEDED)
-		return (resp->icmp.code == ICMP_EXC_TTL ? id : -1);
-	else if (resp->icmp.type == ICMP_DEST_UNREACH)
+	if ((cfg->domain == AF_INET && !valid_ipv4_response(cfg, resp, respip))
+		|| (cfg->domain == AF_INET6 && !valid_ipv6_response(cfg, resp, respip)))
+		return (-1);
+	return (id);
+}
+
+static enum e_probe_status	get_probe_status(t_trcrt_config *cfg, uint8_t type,
+	uint8_t code)
+{
+	if (cfg->domain == AF_INET6)
 	{
-		if (resp->icmp.code == ICMP_PORT_UNREACH
-			&& respip->sin_addr.s_addr != cfg->destip.v4.sin_addr.s_addr)
-			return (-1);
-		return (resp->icmp.code <= ICMP_SR_FAILED ? id : -1);
+		if (type == ICMPV6_TIME_EXCEED)
+			return (E_PRSTAT_RECEIVED_TTL);
+		else if (code == ICMPV6_PORT_UNREACH)
+			return (E_PRSTAT_RECEIVED_PORT);
+		return (E_PRSTAT_UNREACH_NET);
 	}
-	return (-1);
+	if (type == ICMP_TIME_EXCEEDED)
+		return (E_PRSTAT_RECEIVED_TTL);
+	else if (code == ICMP_PORT_UNREACH)
+		return (E_PRSTAT_RECEIVED_PORT);
+	else if (code < ICMP_PORT_UNREACH)
+		return (E_PRSTAT_UNREACH_NET + code);
+	else
+		return (E_PRSTAT_UNREACH_NET + code - 1);
 }
 
 static int	read_response(t_trcrt_config *cfg, char **err)
 {
 	int					rd, id;
-	t_icmp_packet		resp = { 0 };
-	struct sockaddr_in	respip = { 0 };
+	t_packet			resp = { 0 };
+	t_ip				respip = { 0 };
 	socklen_t			len = sizeof(respip);
 
-	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp, sizeof(resp), 0,
+	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp.buf, sizeof(resp.buf), 0,
 		(struct sockaddr *)&respip, &len)) < 0)
 		ft_asprintf(err, "recvfrom: %s", strerror(errno));
+	ft_packet_init(&resp, cfg->domain == AF_INET ? E_IH_V4 : E_IH_V6, NULL);
 	if (*err || rd < (int)RESP_HEADERS(cfg->domain)
 		|| (id = check_resp(cfg, &resp, &respip)) < 0)
 		return (-1);
-	ft_memcpy((void *)&cfg->probes[id].received_ip, (void *)&respip.sin_addr,
-		sizeof(struct in_addr));
-	if (resp.icmp.type == ICMP_TIME_EXCEEDED)
-		cfg->probes[id].status = E_PRSTAT_RECEIVED_TTL;
-	else if (resp.icmp.code < ICMP_PORT_UNREACH)
-		cfg->probes[id].status = E_PRSTAT_UNREACH_NET + resp.icmp.code;
-	else if (resp.icmp.code == ICMP_PORT_UNREACH)
-		cfg->probes[id].status = E_PRSTAT_RECEIVED_PORT;
-	else
-		cfg->probes[id].status = E_PRSTAT_UNREACH_NET + resp.icmp.code - 1;
+	ft_memcpy((void *)&cfg->probes[id].received_ip,
+		(void *)&respip, sizeof(t_ip));
+	cfg->probes[id].status = get_probe_status(cfg, cfg->domain == AF_INET ?
+		resp.next->icmp.type : resp.next->icmp6.icmp6_type,
+		cfg->domain == AF_INET ?
+		resp.next->icmp.code : resp.next->icmp6.icmp6_code);
 	--cfg->pending_probes;
 	return (id);
 }
