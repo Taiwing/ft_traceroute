@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:38:42 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/13 22:00:55 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 22:19:27 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int			main(int argc, char **argv)
 	cfg.dest = get_options(&cfg, argc, argv);
 	if (getuid())
 		ft_exit(EXIT_FAILURE, "user is not root");
-	else if ((ret = ft_get_ip(&cfg.destip, cfg.dest, AF_UNSPEC)))
+	else if ((ret = ft_get_ip(&cfg.destip, cfg.dest, cfg.domain)))
 		ft_exit(EXIT_FAILURE, "%s: %s", cfg.dest, gai_strerror(ret));
 	cfg.domain = cfg.destip.family;
 	if ((cfg.send_socket = socket(cfg.domain, SOCK_DGRAM, IPPROTO_UDP)) < 0)

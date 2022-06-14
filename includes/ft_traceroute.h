@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/13 20:56:44 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/13 22:19:12 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,9 +175,9 @@ typedef struct			s_trcrt_config
 }						t_trcrt_config;
 
 # define	CONFIG_DEF			{\
-	ft_exec_name(*argv), NULL, { 0 }, 0, MAX_TTL_DEF, SPROBES_DEF, NPROBES_DEF,\
-	PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\
-	{{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
+	ft_exec_name(*argv), NULL, { 0 }, AF_UNSPEC, MAX_TTL_DEF, SPROBES_DEF,\
+	NPROBES_DEF, PORT_DEF, (getpid() % 0xffff) | 0x8000, 0, 0, 0, 0, 0, 0, 0,\
+	0, 0, 0, {{ 0 }}, { 0 }, MAX_DEF, HERE_DEF, NEAR_DEF, 0.0, { 0.0 }\
 }
 
 /*
