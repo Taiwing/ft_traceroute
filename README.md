@@ -40,25 +40,29 @@ Usage:
 	ft_traceroute [options] <destination>
 
 Options:
-	<destination>		hostname or IPv4 address
+	<destination>		hostname, IPv4 or IPv6 address
 
-	-h			Print help and exit.
+	-h					Print help and exit.
 
-	-m max_ttl		Set max number of hops and TTL value (def: 30).
+	-m max_ttl			Set max number of hops and TTL value (def: 30).
 
-	-N sprobes		Number of probe packets sent out simultaneously (def: 1).
+	-N sprobes			Number of probe packets sent out simultaneously (def: 16).
 
-	-p port			Destination port base for UDP probes (def: 33434).
+	-p port				Destination port base for UDP probes (def: 33434).
 
-	-q nprobes		Number of probe packets per hop (def: 3).
+	-q nprobes			Number of probe packets per hop (def: 3).
 
 	-w max[,here,near]	Three float values separated by ',' or '/'. 'max' is the
-				maximum time, in seconds, to wait for a response in any
-				case (def: 5.0). The  optional 'here' (def: 3.0) specifies
-				a factor to multiply the round trip time of an already
-				received response from the same hop and sets it as a new
-				timeout value (if less than max). 'near' is the same as
-				'here' except that it will look at the next hop (def: 10.0).
+						maximum time, in seconds, to wait for a response in any
+						case (def: 5.0). The  optional 'here' (def: 3.0) specifies
+						a factor to multiply the round trip time of an already
+						received response from the same hop and sets it as a new
+						timeout value (if less than max). 'near' is the same as
+						'here' except that it will look at the next hop (def: 10.0).
+
+	-4					Use only IPv4.
+
+	-6					Use only IPv6.
 ```
 
 > This program only handles valid local or remote hostnames and IPv4.
