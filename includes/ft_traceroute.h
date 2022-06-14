@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/14 20:39:10 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/14 20:44:20 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ typedef struct			s_probe
 
 # define	FT_TRACEROUTE_OPT	"hm:N:p:q:w:46"
 # define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n\n"\
-	"Options:\n\t<destination>\t\thostname or IPv4 address\n\n"\
+	"Options:\n\t<destination>\t\thostname, IPv4 or IPv6 address\n\n"\
 	"\t-h\t\t\tPrint help and exit.\n\n"\
 	"\t-m max_ttl\t\tSet max number of hops and TTL value (def: %d).\n\n"\
 	"\t-N sprobes\t\tNumber of probe packets sent out simultaneously (def: %d)"\
