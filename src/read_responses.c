@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/12 17:50:49 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/13 22:14:56 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/14 20:09:42 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,14 @@ static int	valid_ipv4_response(t_trcrt_config *cfg, t_packet *resp, t_ip *ip)
 	return (0);
 }
 
-//TODO: Agnostifying type and code wont work since the values of the ICMP and
-//ICMP6 errors are not the same. This will require two different functions. One
-//for IPv4 and one for IPv6.
-//TODO: check headers first (we know the ip header is good since the socket will
-//be in the right domain and that the packet is ICMP since it's the protocol we
-//are listening to. But the second IP header and the UDP header need to be
-//checked.
 static int	check_resp(t_trcrt_config *cfg, t_packet *resp, t_ip *respip)
 {
 	int			id;
-	uint16_t	port = ntohs(resp->last->udp.dest);
+	uint16_t	port;
 
+	if (!resp->nextip || !resp->last)
+		return (-1);
+	port = ntohs(resp->last->udp.dest);
 	id = cfg->port <= (int)port ? (int)port - cfg->port
 		: 0xffff - cfg->port + (int)port - 1;
 	if (id >= cfg->probe_id || id >= PROBES_MAX || cfg->probes[id].status)
@@ -87,18 +83,31 @@ static enum e_probe_status	get_probe_status(t_trcrt_config *cfg, uint8_t type,
 		return (E_PRSTAT_UNREACH_NET + code - 1);
 }
 
+static void	set_retarded_default_ipv6_header(struct ipv6hdr *v6, int size)
+{
+	ft_bzero((void *)v6, sizeof(struct ipv6hdr));
+	v6->payload_len = htons((uint16_t)size);
+	v6->version = 6;
+	v6->nexthdr = IPPROTO_ICMPV6;
+}
+
 static int	read_response(t_trcrt_config *cfg, char **err)
 {
 	int					rd, id;
 	t_packet			resp = { 0 };
 	t_ip				respip = { 0 };
-	socklen_t			len = sizeof(respip);
+	socklen_t			len = ft_ip_sock_size(&cfg->destip);
+	size_t				retarded_offset = cfg->domain == AF_INET ?
+		0 : sizeof(struct ipv6hdr);
 
-	if ((rd = recvfrom(cfg->recv_socket, (void *)&resp.buf, sizeof(resp.buf), 0,
-		(struct sockaddr *)&respip, &len)) < 0)
+	if ((rd = recvfrom(cfg->recv_socket, (void *)(resp.buf + retarded_offset),
+		sizeof(resp.buf) - retarded_offset, 0, (struct sockaddr *)&respip,
+		&len)) < 0)
 		ft_asprintf(err, "recvfrom: %s", strerror(errno));
+	if (cfg->domain == AF_INET6)
+		set_retarded_default_ipv6_header((struct ipv6hdr *)resp.buf, rd);
 	ft_packet_init(&resp, cfg->domain == AF_INET ? E_IH_V4 : E_IH_V6, NULL);
-	if (*err || rd < (int)RESP_HEADERS(cfg->domain)
+	if (*err || (rd + retarded_offset) < (int)RESP_HEADERS(cfg->domain)
 		|| (id = check_resp(cfg, &resp, &respip)) < 0)
 		return (-1);
 	ft_memcpy((void *)&cfg->probes[id].received_ip,
