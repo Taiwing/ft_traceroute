@@ -65,7 +65,8 @@ Options:
 	-6			Use only IPv6.
 ```
 
-> This program only handles valid local or remote hostnames and IPv4.
+> This program handles local and remote hostnames as well IPv4 and IPv6
+> addresses.
 
 #### example:
 
@@ -118,7 +119,7 @@ option).
 
 #### UDP probe example:
 
-IP header:
+IPv4 header:
 
 | version | total length | time to live | protocol | source ip | destination ip |
 |---------|--------------|--------------|----------|-----------|----------------|
