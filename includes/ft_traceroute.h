@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/13 22:19:12 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/14 20:27:45 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ typedef struct			s_probe
 # define	ICMP_PROTO(domain)	(\
 	domain == AF_INET ? IPPROTO_ICMP : IPPROTO_ICMPV6)
 
-# define	FT_TRACEROUTE_OPT	"hm:N:p:q:w:"
+# define	FT_TRACEROUTE_OPT	"hm:N:p:q:w:46"
 # define	FT_TRACEROUTE_HELP	"Usage:\n\t%s [options] <destination>\n\n"\
 	"Options:\n\t<destination>\t\thostname or IPv4 address\n\n"\
 	"\t-h\t\t\tPrint help and exit.\n\n"\
@@ -112,7 +112,9 @@ typedef struct			s_probe
 	" time of an already\n\t\t\t\treceived response from the same hop"\
 	" and sets it as a new\n\t\t\t\ttimeout value (if less than max)."\
 	" 'near' is the same as\n\t\t\t\t'here' except that it will look"\
-	" at the next hop (def: %.1f).\n"
+	" at the next hop (def: %.1f).\n\n"\
+	"\t-4\t\t\tUse only IPv4.\n\n"\
+	"\t-6\t\t\tUse only IPv6.\n"
 
 /*
 ** t_trcrt_config: traceroute configuration

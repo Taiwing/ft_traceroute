@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/14 18:03:02 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/01 17:22:10 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/14 20:28:24 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,8 @@ char		*get_options(t_trcrt_config *cfg, int argc, char **argv)
 			case 'p': intopt(&cfg->port, &optd, 1, USHRT_MAX);			break;
 			case 'q': intopt(&cfg->nprobes, &optd, 1, NPROBES_MAX);		break;
 			case 'w': set_wait_times(cfg, optd.optarg);					break;
+			case '4': cfg->domain = AF_INET;							break;
+			case '6': cfg->domain = AF_INET6;							break;
 			default:
 				ft_printf(FT_TRACEROUTE_HELP, cfg->exec, MAX_TTL_DEF,
 					SPROBES_DEF, PORT_DEF, NPROBES_DEF, MAX_DEF, HERE_DEF,
