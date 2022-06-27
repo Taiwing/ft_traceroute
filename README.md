@@ -20,18 +20,10 @@ cd ft_traceroute/ && make
 sudo ./ft_traceroute example.com
 ```
 
-As shown above this program needs sudo rights. This is because ft\_traceroute
-uses raw sockets to read ICMP responses. If you do not have root access on your
-machine but have docker available you can use the `setup-docker.bash` script to
-run ft\_traceroute. Just run the following commands after having cloned this
-repository:
-
-```shell
-# build docker image and run it
-./setup-docker.bash
-# run ft_traceroute inside the container
-./ft_traceroute example.com
-```
+> If you need to run this on a machine on which you do not have sudo rights this
+> will only work with a virtual machine. Docker's containerization will fail
+> because its network driver does not keep the TTL values of outgoing packets
+> which totally breaks any traceroute utility.
 
 ## Usage
 
