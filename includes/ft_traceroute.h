@@ -6,7 +6,7 @@
 /*   By: yforeau <yforeau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/06 23:40:29 by yforeau           #+#    #+#             */
-/*   Updated: 2022/06/14 20:44:20 by yforeau          ###   ########.fr       */
+/*   Updated: 2022/06/27 10:10:36 by yforeau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct			s_probe
 
 # define	MAX_TTL_DEF			30
 # define	MAX_TTL_MAX			UCHAR_MAX
-# define	SPROBES_DEF			16
+# define	SPROBES_DEF			1
 # define	SPROBES_MAX			512
 # define	NPROBES_DEF			3
 # define	NPROBES_MAX			10
